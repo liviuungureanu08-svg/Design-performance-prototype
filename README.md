@@ -54,7 +54,8 @@ cube capture of the scene itself (its sunlit floor and shaded wall). The light i
 falloff) plus a few real point lights so it actually lights the ribs and floor. Daylight in B = a distant spot whose cookie
 is the window opening. Nothing animates: the page renders, converges, stops (a 1 px hairline shows convergence).
 
-Review: `npm run dev` → `/exp03.html?view=a | b | ab | sil` (`?spp=` passes; `?cam=px,py,pz,tx,ty,tz,fov`, `?p=key:value,…`
+Review preview (private until shared): https://claude.ai/artifact/XA3iDpWSBKocSG7L7r7wWS (= `artifact/exp03.html`).
+Local: `npm run dev` → `/exp03.html?view=a | b | ab | sil` (`?spp=` passes; `?cam=px,py,pz,tx,ty,tz,fov`, `?p=key:value,…`
 design overrides, `?clay` are look-dev only). Stills (128 spp, SwiftShader): `artifact/exp03/` (A, B, A/B, silhouette,
 portrait 390×844). Single-file page: `node scripts/pack-artifact.mjs exp03` → `artifact/exp03.html`.
 `node scripts/shot03.mjs "view=a" out.png 1920x1080` captures after convergence.
