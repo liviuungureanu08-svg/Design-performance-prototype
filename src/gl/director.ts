@@ -1,0 +1,84 @@
+import * as THREE from 'three';
+import { Engine, SUN } from './engine';
+import type { Beat } from '../timeline';
+import { clamp01, smoothstep } from '../scroll';
+
+const SCENES = ['horizon', 'dome', 'sea', 'finale'] as const;
+const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
+
+export interface Look {
+  /** eye/pointer parallax, roughly -1..1 */
+  camX: number;
+  camY: number;
+  time: number;
+}
+
+/** Turns a Beat (scene + transition progress) into render passes. All state derives from the Beat. */
+export class Director {
+  constructor(readonly eng: Engine) {}
+
+  private scene(i: number, target: THREE.WebGLRenderTarget, look: Look, z: number): void {
+    const u = this.eng.u;
+    (u.uCam.value as THREE.Vector3).set(look.camX, look.camY, z);
+    this.eng.pass(SCENES[i], target);
+  }
+
+  /** debug: render a single scene with explicit z */
+  debug: { scene: number; z: number } | null = null;
+
+  render(beat: Beat, look: Look): void {
+    const e = this.eng;
+    const u = e.u;
+    u.uTime.value = look.time;
+    u.uShim.value = 0;
+    u.uFade.value = 0;
+    u.uCrack.value = 0;
+
+    if (this.debug) {
+      this.scene(this.debug.scene, e.rtComp, look, this.debug.z);
+    } else if (beat.tr < 0) {
+      this.scene(beat.scene, e.rtComp, look, 0);
+    } else if (beat.tr === 0) {
+      this.portal(beat.p, look);
+    } else {
+      // temporary stand-ins until the dedicated transitions land
+      this.scene(beat.scene, e.rtFrom, look, 0);
+      this.scene(beat.scene + 1, e.rtTo, look, 0);
+      u.tFrom.value = e.rtFrom.texture;
+      u.tTo.value = e.rtTo.texture;
+      u.uP.value = beat.p;
+      e.pass('copy', e.rtComp);
+    }
+    e.post(e.rtComp);
+  }
+
+  /** T1 — the sun becomes the aperture. */
+  private portal(p: number, look: Look): void {
+    const e = this.eng;
+    const u = e.u;
+    const asp = e.width / e.height;
+    const shim = smoothstep(0, 0.45, p) * (1 - smoothstep(0.6, 0.85, p));
+    const lens = smoothstep(0.04, 0.4, p);
+    const pupil = smoothstep(0.2, 0.46, p);
+    const ex = Math.pow(clamp01((p - 0.46) / 0.54), 2.2);
+    const rMax = 0.5 * Math.hypot(asp, 1) * 1.35;
+    const ra = lerp(SUN.r * pupil, rMax, ex);
+    const dollyA = 0.12 * smoothstep(0, 0.4, p) + ex * 3.2;
+    // B starts small inside the opening (a dark, radial iris around a bright pupil) and grows as we arrive
+    const zoomB = -0.52 * Math.pow(1 - smoothstep(0.34, 1, p), 1.6);
+
+    u.uShim.value = shim;
+    u.uFade.value = smoothstep(0.28, 0.5, p);
+    this.scene(0, e.rtFrom, look, dollyA);
+    u.uShim.value = 0;
+    u.uFade.value = 0;
+    if (ra > 0.004) this.scene(1, e.rtTo, look, zoomB);
+
+    u.tFrom.value = e.rtFrom.texture;
+    u.tTo.value = e.rtTo.texture;
+    u.uP.value = p;
+    u.uAperture.value = ra;
+    u.uLens.value = lens;
+    e.pass('portal', e.rtComp);
+  }
+}
