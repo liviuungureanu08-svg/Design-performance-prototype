@@ -416,7 +416,7 @@ export class Stage {
     this.glowLights.forEach((l, i) => {
       const u = Math.min(d.length - 0.1, Math.max(this.params.f2, c.uM - LM * (0.3 + 0.35 * i)));
       l.position.copy(f.F(u, 0, 0.08));
-      l.intensity = 0.16 * c.glow * c.emit;
+      l.intensity = 0.08 * c.glow * c.emit;
     });
     const look = blendLook(c.hand, c.sun, c.aOut);
     this.look = look;

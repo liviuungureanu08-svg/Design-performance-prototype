@@ -42,7 +42,7 @@ export function choreo(p: number, P: Params): Choreo {
     hand: ss(0.7, 0.93, p),
     aOut: ss(0.77, 0.95, p),
     cam: ss(0.15, 0.48, p) * (1 - ss(0.57, 0.86, p)),
-    glow: ss(0.44, 0.54, p) * (1 - ss(0.62, 0.78, p)),
+    glow: ss(0.44, 0.54, p) * (1 - ss(0.58, 0.7, p)),
   };
 }
 
