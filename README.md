@@ -4,7 +4,7 @@
 |---|---|---|
 | Flagship 01 — Monolith / Inner Architecture | `index.html` (`src/main.ts`, `src/flagship/`) | **CLOSED as R&D.** Technical PASS · spatial transition PASS · premium art direction PARTIAL · human wow NOT ACHIEVED · productization NOT YET. Reusable idea: spatial entry / scale reinterpretation (exterior object → entry → scale change → navigable interior); possible future use = spatial portfolio navigation (future context only, not implemented). Final state: commit `63ab9be`, local tag `flagship01-final` (tag push refused by the remote). |
 | Experiment 02 — The Vale of Orrin (semantic material transformation) | `exp02.html` (`src/exp02/`) | Gates A–C self-assessed PASS, D partial, E done in software GL. **Awaiting human review. Not approved, not reusable/productizable until a human says so.** |
-| Experiment 03 — The Unbuilt (Gabriel Solutions, static endpoint proof) | `exp03.html` (`src/exp03/`) | Two static endpoints only (no transition, no animation). **HUMAN STATIC REVIEW REQUIRED.** Not approved for motion. |
+| Experiment 03 — The Unbuilt (Gabriel Solutions) | `exp03.html` (`src/exp03/`) | Static endpoints: human review PASS (foundation, premium direction, A↔B identity). **Motion Proof implemented (default view): HUMAN MOTION REVIEW REQUIRED.** Human WOW not validated. Experience Library candidate, not productized. |
 
 ## Agent guidance: visual work
 Two separate libraries, used in this order and never both loaded whole by default:
@@ -28,7 +28,7 @@ Khronos glTF sample assets), labelled `[EXTERNAL]` / `[ALFA-PROVEN]`, with licen
 Future agents: read `docs/alfa-visual-tech/README.md` (router), then `SELECTION_MATRIX.md`, then only the 1–2 files it names. Don't read the whole library.
 No dependencies were added for it.
 
-## Experiment 03 — The Unbuilt (static endpoints only)
+## Experiment 03 — The Unbuilt (static endpoints + Motion Proof)
 **Thesis: imagination becomes structure.** Brand: Gabriel Solutions. Hero object (internal name *The Fold*): one thick band,
 folded three times about skewed fold lines into an asymmetric loop that never closes, split along its whole length by a
 30 mm slit, **the Spine**. Everything derives from one flat development (`design.ts` → `fold.ts`: a developable folding map
@@ -65,6 +65,34 @@ its sunlit faces lean warm-brown; the line of sunlight through the Spine inside 
 the edge hairlines can still be read as an outline by some viewers, and a small blue point remains where the light leaves the
 last rib; the B wall's sunlit band sits at the frame edge; portrait is recentred, not individually art-directed; verified
 only in software GL (SwiftShader), a real GPU converges in seconds but was not measured.
+
+### Motion Proof (`motion.ts`, `motion-page.ts`; default view of `exp03.html`)
+**Mechanism.** One hero mesh: B's plates, each vertex carrying its flat position `u`, its fraction across the plate and A's
+plate width there. A vertex-shader *build field* narrows each plate along its isoline of the folding map (isolines are rigid, so
+a narrowed plate is exact geometry: nothing scales from zero, nothing pops). Two frontiers travel along the band:
+1. **light boundary** (`uE`): two lines leave the spine's lips and travel to where the plate edges will be (continuing A's
+   construction hairlines); it runs only ~1–1.9 m of band ahead of the matter, so a complete outline never exists;
+2. **matter** (`uM`): the plate grows from the spine out to that boundary (width), then gains thickness; the newest matter still
+   emits the spine's blue and cools behind its front (emission → reflection). A's implied-plane haze withdraws as matter arrives.
+
+**Arc (scroll progress p, deterministic `state = f(p)`):** 0–15 % A, nothing moves · 15–32 % the spine's single line parts into
+its two lips (the slit has width: it is not drawn on) and the camera begins a small lateral move · 32–45 % boundary light peels off
+the spine over the receded planes · 45–60 % signature: matter forms seg 3 → last fold → seg 4, glowing at its front · 60–75 %
+structure complete, glow and camera settle · 75–90 % light handoff, light by light (A's spots, emitters and spine light fade;
+daylight through the opening rises; sky/env/fog/wall/floor interpolate; daylight arrives *before* A's lights leave, so there is
+no dark trough) — the spine that emitted light now admits a line of sunlight through the slit into the cast shadow · 90–100 % B.
+
+**Camera.** Same ~60 mm lens and position as both endpoints; a single eased offset (≈0.95 m left, 0.3 m up, 0.7 m in, target
+nudged ≈0.12 m) peaking around 45–55 % and gone by ~86 %: observer → investigator → witness. No orbit, no FOV animation.
+
+**Rendering while scrolling.** Each frame renders 2 passes (`?mpp=`) with a short history (new pass weight ≥ 1/3, sample sequence
+keeps advancing); 220 ms after the viewer stops, accumulation restarts clean and converges to the full still (`?spp=`, default 96).
+Progress is SmoothDamp(0.26 s) of the scroll position, snapped exactly onto it at rest (same position → same image).
+Float32 accumulation falls back to half float where the GPU can't render to float32 (common on phones).
+
+**Review.** `npm run dev` → `/exp03.html` (scroll), `/exp03.html?t=0.5` (frozen at 50 %, converges), `?view=a|b|ab|sil`
+(static endpoints, unchanged). Freeze frames: `node scripts/shot03.mjs "view=motion&t=0.5&spp=64" out.png 1600x900`.
+Robustness: `node scripts/robust03.mjs`. Representative frames: `artifact/exp03/motion/`.
 
 ## Experiment 02 — The Vale of Orrin
 **Concept: map → territory.** Scene A is a printed survey sheet (contour map with hypsometric tints, engraved
