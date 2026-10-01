@@ -20,6 +20,7 @@ ${common}
 uniform sampler2D tScene;
 uniform sampler2D tBloom;
 uniform float uGrade;   // 0..1 chapter-dependent bloom mix
+uniform float uFadeIn;  // opening exposure ramp
 uniform vec2 uPostRes;
 vec3 aces(vec3 x){ return clamp((x * (2.51 * x + .03)) / (x * (2.43 * x + .59) + .14), 0., 1.); }
 void main() {
@@ -33,7 +34,7 @@ void main() {
   col.b = texture2D(tScene, uv - c * ca).b;
   vec3 bl = texture2D(tBloom, uv).rgb;
   col += bl * .30;
-  col = aces(col * .92);
+  col = aces(col * .92 * uFadeIn);
   // vignette
   float vg = smoothstep(1.05, .35, length(c * vec2(1.1, 1.)));
   col *= mix(.62, 1., vg);
@@ -120,6 +121,7 @@ export class Engine {
       tBloom: { value: null },
       uDir: { value: new THREE.Vector2() },
       uGrade: { value: 0 },
+      uFadeIn: { value: 1 },
       uPostRes: { value: new THREE.Vector2() },
       tSdf: { value: null },
       tFrom: { value: null },
@@ -133,6 +135,7 @@ export class Engine {
       uRipple: { value: 0 },
       uAppear: { value: 1 },
       uWorld: { value: 1 },
+      uZoom: { value: 1 },
       uRect: { value: new THREE.Vector4(-1.2, -0.6, 2.4, 1.2) },
     };
 
@@ -211,6 +214,30 @@ export class Engine {
     const bh = Math.max(2, rh >> 2);
     this.rtBloomA.setSize(bw, bh);
     this.rtBloomB.setSize(bw, bh);
+  }
+
+  /**
+   * Some GPUs (older mobile) cannot render into half-float targets or multisample them. Probe once, degrade
+   * MSAA if needed, and throw (-> static poster) only if HDR targets themselves are unusable.
+   */
+  validate(): void {
+    const gl = this.renderer.getContext() as WebGL2RenderingContext;
+    const complete = (t: THREE.WebGLRenderTarget): boolean => {
+      this.u.tSrc.value = this.rtBloomA.texture;
+      this.pass('copy', t);
+      const ok = gl.checkFramebufferStatus(gl.FRAMEBUFFER) === gl.FRAMEBUFFER_COMPLETE;
+      this.renderer.setRenderTarget(null);
+      return ok;
+    };
+    if (!this.renderer.extensions.has('EXT_color_buffer_float') && !this.renderer.extensions.has('EXT_color_buffer_half_float')) {
+      throw new Error('float render targets unavailable');
+    }
+    if (!complete(this.rtFrom)) throw new Error('half-float render target incomplete');
+    if (!complete(this.rtComp)) {
+      this.rtComp.samples = 0;
+      this.rtComp.dispose();
+      if (!complete(this.rtComp)) throw new Error('comp target incomplete');
+    }
   }
 
   get internalSize(): THREE.Vector2 {

@@ -14,6 +14,7 @@ uniform sampler2D tSdf;
 uniform vec4 uRect;
 uniform float uCrack;
 uniform float uWorld;
+uniform float uZoom;     // >1: the camera is closer to the word (used to arrive from a push-in)
 uniform float uAppear;   // 0: the word is only light  ..  1: carved obsidian
 
 const float FLOOR_Y = -.175;
@@ -107,7 +108,7 @@ vec3 above(vec2 p, vec2 light, float R) {
 
 void main() {
   vec2 p = pcoord(vUv);
-  p = uSun.xy + (p - uSun.xy) / uWorld;   // portrait: the whole word scales about the light so the O stays on the circle
+  p = uSun.xy + (p - uSun.xy) / (uWorld * uZoom);   // portrait: the whole word scales about the light so the O stays on the circle
   vec2 cam = uCam.xy;
   vec2 pp = p - cam * .01;
   vec2 light = uSun.xy - cam * .006;   // the drop sits a little behind the slab

@@ -9,7 +9,7 @@ const page = await browser.newPage({ viewport: { width: w, height: h } });
 const errs = [];
 page.on('console', (m) => ['error', 'warning'].includes(m.type()) && errs.push(m.text().slice(0, 1500)));
 page.on('pageerror', (e) => errs.push('pageerror ' + e.message));
-await page.goto(`http://localhost:5173/?${q}`, { waitUntil: 'load' });
+await page.goto(`http://localhost:${process.env.PORT ?? 5173}/?noadapt&${q}`, { waitUntil: 'load' });
 await page.waitForTimeout(2500);
 await page.screenshot({ path: out });
 console.log(errs.length ? [...new Set(errs)].slice(0, 4).join('\n') : 'console clean');

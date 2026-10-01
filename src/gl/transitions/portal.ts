@@ -41,8 +41,8 @@ void main() {
     colA.b = sampleTex(tFrom, p - s * .88, asp).b;
   }
   // ---- B: seen through the glass edge of the opening (magnified toward the rim) ----
-  float edgeIn = exp(-pow(min(rim, 0.) / (.04 + ra * .10), 2.));
-  vec2 pb = c + d * (1. - .30 * edgeIn * uLens);
+  float edgeIn = exp(-pow(min(rim, 0.) / (.03 + ra * .06), 2.));
+  vec2 pb = c + d * (1. - .13 * edgeIn * uLens);
   vec3 colB = sampleTex(tTo, pb, asp);
 
   float m = smoothstep(.0035, -.0035, rim);
@@ -51,7 +51,7 @@ void main() {
   // ---- the rim: the sun's light, compressed into a thin refractive ring ----
   float thick = .0022 + .0035 * smoothstep(.0, .5, ra);
   float core = exp(-pow(rim / thick, 2.));
-  float halo = exp(-max(rim, 0.) * (16. - 7. * smoothstep(0., .6, ra))) * .55 * step(0., rim) + exp(-max(-rim, 0.) * 42.) * .45 * step(rim, 0.);
+  float halo = exp(-max(rim, 0.) * (16. - 7. * smoothstep(0., .6, ra))) * .55 * step(0., rim) + exp(-max(-rim, 0.) * 52.) * .20 * step(rim, 0.);
   float open = smoothstep(.012, .05, ra);               // only once the pupil exists
   float energy = open * (1.4 + 2.6 / (1. + ra * 5.5));   // thinner ring => hotter
   vec3 rimCol = mix(vec3(1., .55, .22), vec3(1., .86, .62), core);

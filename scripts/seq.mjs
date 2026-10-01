@@ -9,7 +9,7 @@ const page = await browser.newPage({ viewport: { width: w, height: h } });
 const errs = [];
 page.on('console', (m) => ['error', 'warning'].includes(m.type()) && errs.push(m.text().slice(0, 600)));
 page.on('pageerror', (e) => errs.push('pageerror ' + e.message));
-await page.goto(`http://localhost:5173/?debug&${q}`, { waitUntil: 'load' });
+await page.goto(`http://localhost:5173/?debug&noadapt&${q}`, { waitUntil: 'load' });
 await page.waitForTimeout(2500);
 for (const u of list.split(',')) {
   await page.evaluate((v) => window.__lab.set(Number(v)), u);

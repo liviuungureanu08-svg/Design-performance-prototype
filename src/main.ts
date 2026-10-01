@@ -26,6 +26,8 @@ let director: Director | null = null;
 if (params.get('fallback') !== '1') {
   try {
     eng = new Engine($<HTMLCanvasElement>('gl'));
+    eng.resize(window.innerWidth, window.innerHeight);
+    eng.validate();
     director = new Director(eng);
     eng.raw = params.has('raw');
     if (params.has('scene')) director.debug = { scene: Number(params.get('scene')), z: Number(params.get('z') ?? 0) };
@@ -37,6 +39,7 @@ if (params.get('fallback') !== '1') {
     });
   } catch (err) {
     console.warn('WebGL unavailable, using the static poster.', err);
+    eng?.dispose();
     eng = null;
     director = null;
   }
@@ -46,7 +49,12 @@ if (!eng) document.body.classList.add('no-gl');
 function resize(): void {
   eng?.resize(window.innerWidth, window.innerHeight);
 }
-window.addEventListener('resize', resize);
+// debounced: mobile browsers fire many resize events while the URL bar slides
+let resizeTimer = 0;
+window.addEventListener('resize', () => {
+  window.clearTimeout(resizeTimer);
+  resizeTimer = window.setTimeout(resize, 120);
+});
 resize();
 
 /* --- input -------------------------------------------------------------- */
@@ -73,7 +81,7 @@ if (debug) {
 let slow = 0;
 let fast = 0;
 function adapt(dt: number): void {
-  if (!eng) return;
+  if (!eng || params.has('noadapt')) return;
   if (dt > 1 / 24) slow += dt;
   else slow = Math.max(0, slow - dt * 0.5);
   if (dt < 1 / 52) fast += dt;
@@ -109,6 +117,8 @@ function frame(now: number): void {
     const look = params.has('cx')
       ? { camX: Number(params.get('cx')), camY: Number(params.get('cy') ?? 0), time }
       : { camX: (pointer.sx * 0.5 + Math.sin(time * 0.21) * 0.08) * k * calm, camY: (-pointer.sy * 0.3 + Math.cos(time * 0.17) * 0.05) * k * calm, time };
+    // the film opens out of black: exposure ramps up while the sun is already waiting
+    eng.u.uFadeIn.value = params.has('u') || params.has('scene') ? 1 : Math.pow(clamp01(time / 1.8), 1.6);
     director.render(beat, look);
     adapt(dt);
   }

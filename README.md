@@ -1,82 +1,76 @@
 # Alfa Premium Web Experience Lab
 
-## Objective
+Isolated creative lab (not the production Alfa repo). Question under test: can modern browser tech make a scroll-driven web page that *surprises* — where one recognisable thing becomes another — rather than a polished effect between two images?
 
-Prove (or disprove) that modern browser tech can deliver a studio-grade, scroll-driven visual transformation in which **Scene A physically becomes Scene B** — not a crossfade, not a particle overlay. Isolated lab; not the production Alfa repo.
+## ROUND 1 — "Ember → Tide" (preserved)
 
-## Architecture
+- **Demonstrated:** a GPU-driven image transformation: ~130k instanced shards carrying real image colour, paired by tonal rank / angle, flown through a ring field, SmoothDamp scroll, DOM typography. Technically strong; human review: *"reads as an effect between two images"*.
+- **Architecture:** three.js + custom shaders, Canvas-2D procedural art + depth maps, one instanced mesh, everything a pure function of progress.
+- **Recovery point (do not rewrite):** commit `5e2e40a` · annotated tag `round-1-complete` (local) · remote branch **`round-1-archive`**. To run it: `git checkout round-1-archive && npm i && npm run dev`.
 
-Vite + TypeScript + **three.js (direct, no React/R3F)**. One page, one WebGL canvas, DOM typography on top.
+## ROUND 2 — "One Light" (current)
 
+### Objective
+Direct a multi-chapter *film*, not a showreel: variety of mechanism, unity of art direction. Three fundamentally different transformations, one recurring object, one lighting philosophy ("one light, four states").
+
+### The film
+| | Chapter | World | Light is… |
+|---|---|---|---|
+| I | **Before** | backlit dune horizon, 5 parallax depth layers, a lone traveller, one enormous sun | waiting |
+| II | **Within** | monumental coffered dome seen from below (real ray/sphere geometry, volumetric shaft) | admitted |
+| III | **Held** | night sea; the light is now a liquid refractive drop with a mirrored reflection | a surface |
+| IV | **Now** | the word NOW as carved obsidian slabs on a black mirror; the drop sits inside the O | the word |
+
+**The circle never leaves.** sun → eclipse/pupil → oculus → drop → the O of NOW. Same centre, same radius at every hand-off, so the viewer recognises "that became that".
+
+### Transformations (different mechanism each time — none is particles)
+1. **T1 Sun → aperture → eye** *(optical distortion + mask morph + camera travel)* — heat shimmer builds, a pupil opens in the sun, the sun's light is compressed into a thin refractive rim that bends the dunes around it (chromatic lensing); the dunes rush outward (per-layer dolly) as the rim expands past the frame while the dome pulls in from inside it. The oculus is aligned to the sun, so the circle becomes the dome's own opening.
+2. **T2 The shell breaks** *(macro glass fracture + micro fragments + depth)* — the dome image is cut into ~70 irregular slabs of glass with real thickness along a jagged crack web radiating from the oculus. Cracks first leak the light of the world behind (anticipation), then slabs release in a wave outward from the opening — petals first — tumble toward/past the camera, clear from stone-image into refractive glass, and shed micro-chips from their edges. Pure function of progress, computed in the vertex shader.
+3. **T3 Drop → word** *(liquid mask morph + typography as geometry + light)* — the drop opens into a ring (the O), its signed-distance field is morphed into the SDF of NOW (N and W grow out of the O as liquid skeletons), the word holds a beat as luminous glass cut-outs in the night sea, then floods the frame while the camera surges in and settles; the light-letters darken into obsidian: the word emerges from light.
+
+### Architecture (changed from Round 1)
 ```
-src/art/scenes.ts      Procedural art (Canvas 2D): Ember (scene A) and Tide (scene B), each with a colour + depth map
-src/gl/match.ts        Pairs every A fragment with a B destination (equal-count tonal bands, angular order inside a band)
-src/gl/shaders.ts      Vertex/fragment shaders: the entire transformation is a pure function of progress `uT`
-src/gl/transition.ts   CinematicTransition: instanced shard mesh + dark backdrop + camera/parallax
-src/scroll.ts          Critically-damped smoothing (SmoothDamp) + helpers
-src/typography.ts      Masked word-reveal copy choreography
-src/main.ts            Boot, scroll → progress mapping, frame loop, static fallback
-scripts/shots.mjs      Real-Chromium screenshots at fixed progress values (`window.__lab`, needs `?debug`)
-scripts/robustness.mjs Wheel/reverse/reload/resize/phone/fallback pass with GPU resource counters
+src/gl/engine.ts           Renderer, HDR (half-float) targets, bloom + ACES + grain post, shared uniform block, capability probe
+src/gl/scenes/*.ts         Four procedural *shader scenes* (horizon, dome, sea, finale) — no image assets at all
+src/gl/transitions/*.ts    portal (T1), fracture (T2: Voronoi→jagged glass slabs, vertex-shader motion), liquid (T3)
+src/gl/textsdf.ts          Rasterises N-O-W (drawn circular O) → signed distance field (EDT) → half-float texture
+src/gl/director.ts         Beat → render passes (which scenes, which transition params)
+src/timeline.ts            Scroll layout (dwells ≈ stillness vs transitions) + per-transition tempo curves
+src/main.ts, scroll.ts, typography.ts   boot, SmoothDamp, masked word-reveal copy, adaptive resolution, poster fallback
+scripts/                   view.mjs / seq.mjs (real-Chromium stills), robustness.mjs
 ```
+Scenes render into half-float targets; a transition is a composite of two scene targets (T1, T3: full-screen shader; T2: a real 3-D mesh pass). Everything is a pure function of scroll progress → reverse, pause, jump and reload are inherently coherent. Scroll → SmoothDamp → `Beat{scene, transition, p}`; dwell segments are near-still holds.
 
-How the transformation works:
+### Milestones (all done in first form)
+R2-0 preservation · R2-1 art direction (4 static scenes, quality-gated frozen) · R2-2 first non-particle transform (T1) · R2-3 second language (T2) · R2-4 sequence (T3, timeline, copy, rhythm) · R2-5 WOW pass (fixed: NaN from `exp` overflow, dome ray-march zipper, bright-wash bug in portal, slab over-exposure, SDF jaggies, portrait finale scale, seam checks at every transition boundary) · R2-6 robustness (below).
 
-1. **Fragments are the image.** The image is tiled by a jittered lattice (~130k irregular quads). Corners are shared, so at rest the shards tile exactly and the picture is intact; each shard samples its *own* cell of the texture, so in flight it carries real image colour, never generic dots.
-2. **Real depth.** A procedural depth map displaces shards in z; the camera orbits slightly with the pointer → genuine parallax. Rest positions are perspective-compensated so the neutral view is pixel-identical to the flat art.
-3. **Matter continuity.** Each A shard is assigned a B destination by tonal rank (1-D optimal transport on luminance) with angular order preserved around each scene's focal point → energy/colour is conserved and neighbours travel together (laminar flow, not noise).
-4. **A → field → B.** Path = quadratic Bézier forced through a point on a tilted, shearing **ring** (the controlled intermediate field), whose angle/radius derive from the shard's place in A. Eased with a dwell near the midpoint so the field is readable.
-5. **Choreography.** Departure order: periphery first, centre (the sun) holds longest; shards shiver and draw inward just before leaving (anticipation); sizes vary, ~1% are larger "hero" shards for depth; light cues from shard normals; scroll-velocity stretches shards along their motion.
-6. **Scroll feel.** Native scroll → SmoothDamp (spring-like inertia) → progress. All state is a pure function of progress, so reverse/pause/jump/reload are inherently coherent.
+### Quality & fallbacks
+- `?noadapt` disables adaptive resolution (used for stills). Default: render scale 0.85 of device pixels, auto-drops to 0.5 if frames are slow, ≤1.7 MP per pass.
+- Portrait: scenes are height-normalised; the finale word scales about the circle so the O stays on the circle. Copy sits top for chapter III (reflection occupies the bottom).
+- No WebGL2 / no float render targets / context loss / `?fallback=1` → static poster + all copy still works. MSAA is dropped automatically if unsupported.
+- `prefers-reduced-motion` → ambient camera drift reduced; scroll-driven transitions remain (they *are* the content).
 
-## Current State
+### Verification
+- `tsc --noEmit`, `vite build` (≈580 kB JS, 151 kB gz; no image assets) pass; production bundle checked via `vite preview`.
+- Real Chromium (SwiftShader software GL) stills at 640×360 → 1600×900 and 390×844@3×: every chapter, every transition at 6–10 progress points, boundary seams (transition end ≡ dwell start), fracture early→late, T3 morph sequence. Contact sheets reviewed; defects fixed iteratively.
+- `node scripts/robustness.mjs` (dev or preview server running): wheel slow/fast/reverse PASS · pause mid-transition ×3 PASS · reload keeps position PASS · 7 resize cycles incl. portrait with no GPU resource growth PASS · phone portrait across the film PASS · forced fallback PASS · console clean PASS.
 
-All milestones M0–M6 implemented in first form; visually verified in headless Chromium (software WebGL). See Verification.
+### Known limitations
+- **Not measured on a real GPU** (software GL only). The dome ray-march and finale (≈25 SDF fetches/px, ×2 over the mirror floor) are the heavy passes; adaptive scale is the safety net.
+- Headless wheel input is coalesced under software rendering (a fast-wheel run advanced less than requested) — a test-harness artefact, not observed in the page logic.
+- No touch/gyro parallax on phones (ambient drift only). iOS Safari float-target/MSAA behaviour untested.
+- Dome's lit patch is soft; T2's micro-fragments are flat triangles (they read as glass chips in motion, less so in stills). Finale serif tips soften slightly (SDF resolution 1024×512).
+- Static art is procedural and tuned by eye; no reference to any third-party site or asset.
 
-## Completed Milestones
+### Harvest candidates (not extracted yet — proof first)
+`PortalTransition` (lensing rim + per-layer dolly), `GlassShellFracture` (Voronoi→jag→slab + vertex-shader motion), `SdfMaskMorph` (circle→type→flood with meniscus), `DepthLayerScene` (analytic parallax layers), `HdrPost` (bloom/ACES/grain), `CinematicScrollTimeline` (dwell/transition beats + tempo curves).
 
-- M0 Foundation · M1 Static art direction · M2 Depth/scroll/typography · M3 Fragmentation · M4 A→field→B · M5 Polish (first pass: departure order, hero shards, shading, soft reflections) · M6 Robustness pass (see Verification)
-
-## Current Milestone
-
-Polish iteration / validation on real GPU hardware.
-
-## Important Technical Decisions
-
-- **Direct three.js + custom shaders**, no R3F, no GSAP/ScrollTrigger: one mesh, one uniform-driven timeline; a 15-line SmoothDamp beats a timeline library here.
-- **All art is procedural** (code-generated at runtime) → no third-party asset licensing. Fonts: Instrument Serif and Inter via `@fontsource` (SIL OFL).
-- **Dark blurred backdrop** under the shards so depth disocclusion gaps and departed regions read as tone, not as holes.
-- **Quality levels**: `?q=balanced` (58k shards) vs default `premium` (130k). `?fallback=1`, WebGL failure, context loss or `prefers-reduced-motion` → static scroll cross-fade of the two scenes.
-- Timeline: scroll 0–12 % calm (parallax), 12–33 % build-up, 33–70 % transformation, 85 %+ Tide settled. Page runway 820 vh.
-
-## Known Limitations
-
-- Verified only on software WebGL (SwiftShader) — real-GPU frame rates are **not measured**; 130k shards × 4 verts with 2 path evaluations is expected to be comfortable on discrete/modern integrated GPUs but unproven.
-- Depth parallax can show faint disocclusion seams at hard depth edges at maximum pointer offset (mitigated by 4 % shard overscan + backdrop).
-- Matching is tonal/angular only; no semantic correspondence (a sun does not literally "become" the eclipse, it feeds it by tone).
-- No touch-gyro parallax on mobile; phone layout is cover-cropped.
-
-## How to Run
-
+## How to run
 ```bash
 npm install
-npm run dev        # http://localhost:5173  (add ?q=balanced, ?fallback=1, ?debug)
-npm run build      # typecheck + production build to dist/
-npm run preview
-npm run shots      # needs the dev server running; writes ./shots/*.png
+npm run dev                  # http://localhost:5173   (?debug exposes window.__lab.set(u); ?u=0.24 pins progress)
+npm run build && npm run preview
+node scripts/view.mjs "u=0.24" out.png 1280x720      # dev server must be running
+node scripts/seq.mjs "" prefix 0.2,0.24,0.5 960x540  # stills to /tmp/claude-0/
 node scripts/robustness.mjs
 ```
-
-`?debug` exposes `window.__lab.set(u)` (force progress 0..1) and `window.__lab.info()`.
-
-## Verification
-
-- `tsc --noEmit` and `vite build` pass.
-- Real Chromium (SwiftShader): scene A, build-up, ring field, convergence, scene B captured at fixed progress; console clean.
-- `scripts/robustness.mjs` (run at 480×270, `?q=balanced`, software GL): wheel advance PASS, reverse scroll PASS, reload at mid-scroll keeps position PASS, 5 resize cycles with no texture/geometry growth (6 textures / 2 geometries, constant) PASS, forced fallback engages PASS, console clean.
-- 390×844 phone: found and fixed a cover-fit bug (portrait was letterboxed); re-verified start/mid/end fill the screen (`scripts/phone.mjs`).
-- Not verified: real-GPU frame rate; fallback visual quality beyond engaging; 2× DPR on real hardware.
-
-## Next
-
-Measure on real hardware; tune shard count per device (PREMIUM 130k / BALANCED 58k / FALLBACK static); then evaluate extracting `CinematicImageTransition` (match + shaders + transition) and `ScrollChoreography` (SmoothDamp + copy) as reusable primitives.

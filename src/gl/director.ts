@@ -63,8 +63,11 @@ export class Director {
     const u = e.u;
     this.scene(2, e.rtFrom, look, 0);
     u.uAppear.value = smoothstep(0.78, 1.0, p);
+    // while the light floods the frame the camera surges toward the word, then settles back onto it
+    u.uZoom.value = 1 + 0.30 * smoothstep(0.66, 0.84, p) * (1 - smoothstep(0.84, 1.0, p));
     this.scene(3, e.rtTo, look, 0);
     u.uAppear.value = 1;
+    u.uZoom.value = 1;
     u.tFrom.value = e.rtFrom.texture;
     u.tTo.value = e.rtTo.texture;
     u.uP.value = p;

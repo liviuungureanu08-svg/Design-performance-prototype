@@ -76,7 +76,7 @@ void main() {
   // ---------- sun ----------
   float disc = smoothstep(sunR + px, sunR - px * 2., r);
   float limb = pw(sat(1. - r / sunR), .35);
-  vec3 sunCol = mix(vec3(1.25, .50, .17), vec3(2.9, 2.0, 1.25), pw(limb, 1.1));
+  vec3 sunCol = mix(vec3(1.05, .40, .13), vec3(2.3, 1.55, .92), pw(limb, 1.25));
   sunCol *= .86 + .14 * fbm3(d * 22. + uTime * .02); // faint photospheric mottling
   col = mix(col, sunCol, disc * (1. - uFade));
 

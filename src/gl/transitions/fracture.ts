@@ -290,12 +290,12 @@ void main() {
 
   if (kind < .5) {
     // ---- front face: the dome, seen through a slab of glass ----
+    vec2 scr = gl_FragCoord.xy / vec2(textureSize(tTo, 0));
     vec3 img = texture2D(tFrom, uv).rgb;
     img /= 1. + .55 * luma(img);
     float e = vMisc.x;
     float edge = 1. - smoothstep(0., .012, e);
     // glassy bevel refracts the world behind it
-    vec2 scr = gl_FragCoord.xy / vec2(textureSize(tTo, 0));
     vec2 off = N.xy * .035 * edge;
     vec3 behind = texture2D(tTo, scr + off).rgb;
     col = mix(img * .82, behind * 1.1 + vec3(.10, .12, .16), edge * .4 * smoothstep(0., .12, vTau));
@@ -309,8 +309,11 @@ void main() {
     float flick = .55 + .45 * vnoise(vRest * 38. + uTime * .5);
     float crack = exp(-e / .0024) * crackHot * flick;
     col += vec3(1., .58, .26) * crack * 2.4 + vec3(1., .9, .75) * exp(-e / .0009) * crackHot * flick * 1.2;
-    // slabs darken a touch as they tumble away from the light
-    col *= 1. - .35 * smoothstep(0., 1., vTau);
+    // as a slab leaves, the stone image clears into glass and starts to show the world behind it
+    float clear = smoothstep(.04, .7, vTau) * .62;
+    vec3 seen = texture2D(tTo, scr + N.xy * (.05 + .14 * vTau) + (uv - .5) * .02 * vTau).rgb;
+    col = mix(col, seen * 1.15 + vec3(.05, .06, .09), clear);
+    col *= 1. - .25 * smoothstep(0., 1., vTau);
   } else if (kind < 1.5) {
     // ---- back face: dark glass with a faint reflection of the world ----
     vec2 scr = gl_FragCoord.xy / vec2(textureSize(tTo, 0));

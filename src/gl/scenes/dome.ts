@@ -71,9 +71,14 @@ void main() {
     float dv = min(v, 1. - v) * cellH;
     float bev = .0105;
     float edge = min(du, dv);
-    float inBev = 1. - smoothstep(0., bev, edge);
-    float recess = smoothstep(bev * .6, bev * 1.4, edge);
-    float ao = mix(.30, 1., smoothstep(0., bev * 5., edge));
+    // anti-alias: when a coffer is only a few pixels wide, fade its relief into plain wall instead of shimmering
+    float cfc = ph / TAU * COLS;
+    float fwC = min(fwidth(cfc), fwidth(fract(cfc + .5)));
+    float detail = 1. - smoothstep(.22, .5, max(fwidth(rowf), fwC));
+    float inCof = (1. - smoothstep(.985, 1., s)) * detail;   // below the last row the wall is plain
+    float inBev = (1. - smoothstep(0., bev, edge)) * inCof;
+    float recess = smoothstep(bev * .6, bev * 1.4, edge) * inCof;
+    float ao = mix(1., mix(.30, 1., smoothstep(0., bev * 5., edge)), inCof);
 
     vec3 n = -h;
     // tangent frame on the sphere
@@ -81,8 +86,8 @@ void main() {
     vec3 eP = normalize(vec3(-h.z, 0., h.x));
     float tu = (uu - .5) * 2.;
     float tv = (v - .5) * 2.;
-    float wU = (1. - smoothstep(0., bev, du)) * sign(tu);
-    float wV = (1. - smoothstep(0., bev, dv)) * sign(tv);
+    float wU = (1. - smoothstep(0., bev, du)) * sign(tu) * inCof;
+    float wV = (1. - smoothstep(0., bev, dv)) * sign(tv) * inCof;
     n = normalize(n - eP * wU * .9 - eT * wV * .9);
 
     vec3 Lo = normalize(vec3(0., 1., 0.) - h);          // toward oculus centre
@@ -96,7 +101,7 @@ void main() {
     vec3 alb = mix(stone, stone * vec3(.70, .78, .98) * .42, recess);
     vec3 skyBounce = mix(vec3(1., .62, .34), vec3(.45, .40, .50), sat((th - TH0) * 1.1));
     float ambient = .012 + .75 * exp(-(th - TH0) * 4.6);
-    col = alb * skyBounce * (ambient * ao + diff * 2.0 * ao + beam * vec3(1., .80, .56) * 4.2 * mix(.25, 1., ao));
+    col = alb * (skyBounce * (ambient * ao + diff * 2.0 * ao) + beam * vec3(1., .78, .52) * 5.5 * mix(.18, 1., ao));
     // coffer walls turned toward the opening catch the light
     float catchL = pw(sat(dot(n, Lo)), 2.) * inBev;
     col += vec3(1., .66, .36) * catchL * aLit * .9;
@@ -116,9 +121,10 @@ void main() {
   vec3 bd = normalize(BEAM);
   float scat = 0.;
   float tEnd = t;
-  const int N = 22;
+  const int N = 16;
+  float ign = fract(52.9829189 * fract(dot(gl_FragCoord.xy, vec2(.06711056, .00583715))));
   for (int i = 0; i < N; i++) {
-    float f = (float(i) + hash21(gl_FragCoord.xy * 1.37)) / float(N);
+    float f = (float(i) + ign) / float(N);
     vec3 sp = eye + d * (tEnd * f);
     // distance of sp from the beam axis (line through oculus centre along bd)
     vec3 o0 = vec3(0., cos(TH0), 0.);
@@ -130,7 +136,7 @@ void main() {
     float dens = .55 + .9 * fbm3(vec2(along * 6. + uTime * .04, length(perp) * 9.));
     scat += inside * dens * exp(-along * .9);
   }
-  scat *= tEnd / float(N) * smoothstep(1.5, 1.1, th);
+  scat *= tEnd / float(N) * smoothstep(1.2, .8, th);
   col += vec3(1., .72, .42) * scat * .5;
 
   // floating dust motes catching the beam
