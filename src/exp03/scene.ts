@@ -393,8 +393,8 @@ export class Stage {
     ether.add(lightLine(f, p.f2 + 0.02, p.f3, [p.f2 + 0.02, p.f2 + 0.12, p.f2 + 0.22, p.f2 + 0.85], 0.035, 0.3, edgeOf(d.wL, -1), edgeOf(d.wL, -1), 1, U, 1.0));
     ether.add(lightLine(f, p.f2 + 0.02, p.f3, [p.f2 + 0.02, p.f2 + 0.12, p.f2 + 0.3, p.f2 + 1.05], 0.035, 0.3, edgeOf(d.wR, 1), edgeOf(d.wR, 1), 1, U, 1.0));
     // light boundaries that leave the spine and travel to where the outer edges will be (they continue A's hairlines)
-    ether.add(lightLine(f, p.f2 + 0.2, d.length, [p.f2 + 0.2, p.f2 + 0.85, d.length - 0.05, d.length + 0.01], 0.035, 0.3, () => -g2, edgeOf(d.wL, -1), 2, U, 1.0));
-    ether.add(lightLine(f, p.f2 + 0.2, d.length, [p.f2 + 0.3, p.f2 + 1.05, d.length - 0.05, d.length + 0.01], 0.035, 0.3, () => g2, edgeOf(d.wR, 1), 2, U, 1.0));
+    ether.add(lightLine(f, p.f2, d.length, [p.f2, p.f2 + 0.4, d.length - 0.05, d.length + 0.01], 0.035, 0.3, () => -g2, edgeOf(d.wL, -1), 2, U, 1.0));
+    ether.add(lightLine(f, p.f2, d.length, [p.f2, p.f2 + 0.4, d.length - 0.05, d.length + 0.01], 0.035, 0.3, () => g2, edgeOf(d.wR, 1), 2, U, 1.0));
     ether.add(hazePlane(f, p.f2 + 0.1, d.length, [p.f2 + 0.2, p.f2 + 0.9, p.f3 + 0.35, d.length - 0.15], 0.07, U));
     this.objectGroup.add(ether);
     // A's emitters (the luminous spine lights the ribs and floor) and two that ride the forming matter
