@@ -321,9 +321,9 @@ export class Stage {
     const warm = new THREE.Color(1, 0.985, 0.96).lerp(new THREE.Color(1, 0.83, 0.64), p.sunWarm);
     this.sun.color.copy(warm);
     this.sun.intensity = 2.0 + 3.1 * p.sunWarm;
-    this.hemi.intensity = 0.95 - 0.55 * p.sunWarm;
+    this.hemi.intensity = 0.95 - 0.45 * p.sunWarm;
     this.hemi.color.set(0xe7ecef).lerp(new THREE.Color(0xb7c9e6), p.sunWarm);
-    this.scene.environmentIntensity = 0.75 - 0.33 * p.sunWarm;
+    this.scene.environmentIntensity = 0.75 - 0.25 * p.sunWarm;
     this.waterU.value = p.water;
     this.linesU.value = 1 - p.water;
     this.warmU.value = p.sunWarm;
@@ -332,8 +332,10 @@ export class Stage {
     // camera: a slow settle from reading the sheet to regarding the land
     const c = p.cam;
     const portrait = this.aspect < 1;
-    const dist = c.dist * (portrait ? 1.55 / Math.max(0.45, this.aspect) * 0.62 : 1);
-    this.camera.position.set(c.tx + Math.sin(c.az) * Math.cos(c.el) * dist, c.ty - Math.cos(c.az) * Math.cos(c.el) * dist, c.tz + Math.sin(c.el) * dist);
+    // portrait: frame the neatline rather than the whole sheet, and look down a little more so the land uses the height
+    const dist = c.dist * (portrait ? 0.82 / Math.max(0.42, this.aspect) : 1);
+    const el = c.el + (portrait ? 0.12 : 0);
+    this.camera.position.set(c.tx + Math.sin(c.az) * Math.cos(el) * dist, c.ty - Math.cos(c.az) * Math.cos(el) * dist, c.tz + Math.sin(el) * dist);
     this.camera.lookAt(c.tx, c.ty, c.tz);
     this.renderer.render(this.scene, this.camera);
   }

@@ -62,10 +62,12 @@ if (debug) {
 }
 
 const hint = $('hint');
+// dt clamp guards against tab-switch jumps; ?dtmax lets slow software-GL test rigs settle in real time
+const dtMax = Number(params.get('dtmax') ?? 0.05);
 let lastKey = '', sizeKey = '';
 let last = performance.now();
 function frame(now: number): void {
-  const dt = Math.min(0.05, Math.max(0.001, (now - last) / 1000));
+  const dt = Math.min(dtMax, Math.max(0.001, (now - last) / 1000));
   last = now;
   const target = override ?? readProgress();
   const uH = override ?? sH.step(target, dt), uL = override ?? sL.step(target, dt), uM = override ?? sM.step(target, dt);

@@ -25,8 +25,8 @@ export function pose(u: number, uHeavy = u, uLight = u): Pose {
     const f = (j - 1) / (N - 1);
     const p = lerp(uHeavy, uLight, f);
     // anticipation: the cut lines open into hairline steps before anything rises
-    const pre = 0.055 * smooth(0.04, 0.14, p);
-    const start = 0.15 + f * 0.42, dur = 0.2 - f * 0.07;
+    const pre = 0.14 * smooth(0.03, 0.12, p);
+    const start = 0.1 + Math.pow(f, 0.8) * 0.44, dur = 0.25 - f * 0.08;
     const g = pre + (1 - pre) * leaf((p - start) / dur, 0.05 + 0.13 * f);
     acc += D * g;
     lift.push(acc);
@@ -34,10 +34,10 @@ export function pose(u: number, uHeavy = u, uLight = u): Pose {
   const cam = smooth(0.1, 0.8, u);
   return {
     lift,
-    hill: 1 - smooth(0.38, 0.8, u),
-    sunEl: lerp(rad(66), rad(16), smooth(0.3, 0.88, u)),
-    sunWarm: smooth(0.42, 0.92, u),
-    water: smooth(0.8, 0.95, u),
+    hill: 1 - smooth(0.42, 0.78, u),
+    sunEl: lerp(rad(66), rad(16), smooth(0.5, 0.9, u)),
+    sunWarm: smooth(0.6, 0.93, u),
+    water: smooth(0.82, 0.96, u),
     cam: { el: lerp(rad(64), rad(36), cam), dist: lerp(18.6, 18.2, cam), tx: lerp(0, 0.15, cam), ty: lerp(-0.33, -0.6, cam), tz: lerp(0, 0.3, cam), az: lerp(0, rad(-14), cam) },
   };
 }

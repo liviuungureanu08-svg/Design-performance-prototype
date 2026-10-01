@@ -1,4 +1,53 @@
-# ALFA Premium Experience Lab — Flagship 01 · Monolith / Inner Architecture
+# ALFA Premium Experience Lab
+
+| Experiment | Page | State |
+|---|---|---|
+| Flagship 01 — Monolith / Inner Architecture | `index.html` (`src/main.ts`, `src/flagship/`) | **CLOSED as R&D.** Technical PASS · spatial transition PASS · premium art direction PARTIAL · human wow NOT ACHIEVED · productization NOT YET. Reusable idea: spatial entry / scale reinterpretation (exterior object → entry → scale change → navigable interior); possible future use = spatial portfolio navigation (future context only, not implemented). Final state: commit `63ab9be`, local tag `flagship01-final` (tag push refused by the remote). |
+| Experiment 02 — The Vale of Orrin (semantic material transformation) | `exp02.html` (`src/exp02/`) | Gates A–C self-assessed PASS, D partial, E done in software GL. **Awaiting human review. Not approved, not reusable/productizable until a human says so.** |
+
+## Experiment 02 — The Vale of Orrin
+**Concept: map → territory.** Scene A is a printed survey sheet (contour map with hypsometric tints, engraved
+relief shading, water lining, title block). Scene B is the same sheet as a paper relief model under low sun: the
+map's own paper splits into 24 leaves, each cut exactly along one printed contour, stacked into the land.
+Scene A is the construction drawing of Scene B, because both come from one authored height field:
+`terrain.ts` → marching-squares loops → (a) the printed contour lines and tints, (b) the leaf geometry.
+
+Ancestry (Scene B ← Scene A):
+| Scene B | came from |
+|---|---|
+| each terrace edge / cut wall | the printed contour line at that height (same polyline) |
+| terrace tops + the coloured strata on the walls | the hypsometric tint bands; the legend ramp stays flat as their key |
+| real cast shadows from a low western sun | the printed relief shading, drawn from the same azimuth; it fades as real shadow arrives |
+| the lake: a reflective water surface over a terraced basin | the printed blue lake; its engraved shore-parallel water lining leaves the paper as the water arrives (faint swell at the same phase) |
+| summit, "Carn Orrin", "Western Fell", title block | the same printed marks; labels are placed on a single leaf so type never breaks across a cut |
+
+Perceptual anchors: the lough (the only cool shape; its silhouette and position never change) and the summit mark.
+
+Choreography (`choreo.ts`, pure functions of progress): 0–3% hold → 3–12% the contour lines open into hairline steps
+(anticipation) → 10–75% leaves rise bottom-up in overlapping windows (each lifts everything above it, so the stack
+is always in contact; lighter upper leaves arrive quicker with a little overshoot; three inertia groups in `main.ts`)
+→ 42–78% printed shading hands over → 50–93% sun lowers and warms → 82–96% ink becomes water. Camera: one slow
+settle from 64° to 36° elevation and −14° azimuth (document → object); no fly-through.
+
+What worked: one-source construction makes ancestry literal and legible; the 37–63% band reads as "the print is
+becoming terraces", not as a dissolve; walls caught by side light carry the material read (paper thickness).
+What failed / was replaced: contre-jour sun (muddy walls) → west side light; reflection-distortion ripples (aliased,
+shader-demo look) → still water + faint brightness swell; printed water lining under water (jaggy) → separate plate
+that fades out; plinth rising alone at 20–35% ("map on a box") → overlapping leaf windows; light change competing with
+the rise at 62–69% → light now starts after most leaves have landed.
+
+Unresolved: ~0–12% is quiet (the anticipation is subtle at full-sheet scale); the land tops are smooth-flat
+(paper tooth only at grazing light); the summit's ridged hillshade is noisy in A; portrait leaves empty bands above
+and below the landscape-shaped object; Scene B lowers overall key (desk becomes slate-charcoal); verified only in
+software GL (SwiftShader), never on a real phone GPU.
+
+Run: `npm run dev` → `/exp02.html` (`?debug`, `?u=0.5` pins progress, `?fallback=1` shows the printed poster).
+`PAGE=exp02.html node scripts/strip.mjs "" m 0 1 0.0625` contact sheet; `node scripts/pack-artifact.mjs exp02` → `artifact/exp02.html`;
+`node scripts/robust02.mjs` (serve `artifact/` on :8099).
+
+---
+
+# Flagship 01 · Monolith / Inner Architecture (closed)
 
 Isolated creative lab (not the production ALFA repo). **Status: Gate C reworked after human review (TARGETED REWORK); self-inspected only; NOT human-approved.**
 
