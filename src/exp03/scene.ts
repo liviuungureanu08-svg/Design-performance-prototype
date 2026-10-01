@@ -56,11 +56,11 @@ const LOOKS: Record<SceneId, Look> = {
 const lerpHex = (a: number, b: number, t: number) => new THREE.Color(a).lerp(new THREE.Color(b), t).getHex();
 const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
 /** the look at handoff h: every light of A and of B exists; A's dim as B's rise (light by light, never image by image) */
-function blendLook(h: number, sun: number, emit: number): Look {
+function blendLook(h: number, sun: number, aOut: number): Look {
   const A = LOOKS.a, B = LOOKS.b;
   return {
     exposure: 1,
-    spots: [...A.spots.map((s) => ({ ...s, intensity: s.intensity * (1 - h) * (0.35 + 0.65 * emit) })), ...B.spots.map((s) => ({ ...s, intensity: s.intensity * h }))],
+    spots: [...A.spots.map((s) => ({ ...s, intensity: s.intensity * (1 - aOut) })), ...B.spots.map((s) => ({ ...s, intensity: s.intensity * h }))],
     sky: { up: lerp(A.sky.up, B.sky.up, h), down: lerp(A.sky.down, B.sky.down, h), tint: lerpHex(A.sky.tint, B.sky.tint, h), bounce: lerpHex(A.sky.bounce, B.sky.bounce, h) },
     env: lerp(A.env, B.env, h), fog: lerp(A.fog, B.fog, h), fogColor: lerpHex(A.fogColor, B.fogColor, h),
     wall: lerpHex(A.wall, B.wall, h), floor: lerpHex(A.floor, B.floor, h),
@@ -418,7 +418,7 @@ export class Stage {
       l.position.copy(f.F(u, 0, 0.08));
       l.intensity = 0.16 * c.glow * c.emit;
     });
-    const look = blendLook(c.hand, c.sun, c.emit);
+    const look = blendLook(c.hand, c.sun, c.aOut);
     this.look = look;
     const key = Math.round(c.hand * 24);
     this.applyLook(look, key !== this.envKey);

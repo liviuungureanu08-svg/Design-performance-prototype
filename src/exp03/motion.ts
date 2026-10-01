@@ -22,6 +22,7 @@ export interface Choreo {
   emit: number; // authority of emitted light (1 → 0)
   sun: number; // authority of daylight (0 → 1)
   hand: number; // environment / look handoff A → B (0 → 1)
+  aOut: number; // A's own lights leave (after daylight has arrived: no dark trough between the two)
   cam: number; // investigator offset (0 → 1 → 0)
   glow: number; // light given off by forming matter (rises and falls with the signature moment)
 }
@@ -37,8 +38,9 @@ export function choreo(p: number, P: Params): Choreo {
     uE: uM + 1.55 * ss(0.26, 0.42, p) - 0.5 * ss(0.42, 0.56, p),
     uM,
     emit: 1 - ss(0.73, 0.91, p),
-    sun: ss(0.72, 0.93, p),
-    hand: ss(0.72, 0.95, p),
+    sun: ss(0.68, 0.88, p),
+    hand: ss(0.7, 0.93, p),
+    aOut: ss(0.77, 0.95, p),
     cam: ss(0.15, 0.48, p) * (1 - ss(0.57, 0.86, p)),
     glow: ss(0.44, 0.54, p) * (1 - ss(0.62, 0.78, p)),
   };
