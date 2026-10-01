@@ -69,6 +69,7 @@ const GROW_COMMON = /* glsl */ `
     float g = gsm(0., .55, ms);                       // width: matter spreads from the spine to the boundary
     float span = max(aWA, aWB * g);                    // never narrower than what A already had
     float th = aWA > 0. ? 1. : mix(.16, 1., gsm(.12, .78, ms)); // then the new plane gains its thickness
+    th *= gsm(0., .015, span); // matter that does not exist yet has no extent at all (no slivers in the slit)
     p += aDv * (aVf * (span - aWB));
     p += aDz * (aZf * (th - 1.));
     float fresh = gsm(aWA - .004, aWA + .03, aVf * span);  // only matter that did not exist in A
