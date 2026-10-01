@@ -5,6 +5,20 @@
 | Flagship 01 — Monolith / Inner Architecture | `index.html` (`src/main.ts`, `src/flagship/`) | **CLOSED as R&D.** Technical PASS · spatial transition PASS · premium art direction PARTIAL · human wow NOT ACHIEVED · productization NOT YET. Reusable idea: spatial entry / scale reinterpretation (exterior object → entry → scale change → navigable interior); possible future use = spatial portfolio navigation (future context only, not implemented). Final state: commit `63ab9be`, local tag `flagship01-final` (tag push refused by the remote). |
 | Experiment 02 — The Vale of Orrin (semantic material transformation) | `exp02.html` (`src/exp02/`) | Gates A–C self-assessed PASS, D partial, E done in software GL. **Awaiting human review. Not approved, not reusable/productizable until a human says so.** |
 
+## Agent guidance: visual work
+Two separate libraries, used in this order and never both loaded whole by default:
+1. **ALFA Visual Intelligence** — `docs/alfa-visual-intelligence/` — WHAT should exist and WHY it belongs to the brand (frozen baseline v1.0).
+2. **ALFA Technical Visual Intelligence** — `docs/alfa-visual-tech/` — HOW to implement an already-approved direction.
+
+- Visual / art-direction work: read `docs/alfa-visual-intelligence/QUICK_REFERENCE.md` first.
+- New visual concept, new experiment, major transformation, art-direction conflict, generic-output diagnosis, or a change to Visual
+  Intelligence: read the full Master `docs/alfa-visual-intelligence/ALFA_VISUAL_INTELLIGENCE_v1.0.md`.
+- Only after the direction has passed its visual/human gates: use the technical router to choose HOW.
+- Routing table and the visual → technical hand-off: `docs/alfa-visual-intelligence/README.md`.
+- Previous experiments below are lessons and proofs, not visual templates. Engineering PASS + Art Direction FAIL = FAIL.
+- Non-visual tasks need neither library.
+- Pending engineering validation (not done): first real-GPU / phone measurements (see `docs/alfa-visual-tech/PERFORMANCE.md`).
+
 ## Technical Visual Intelligence Library
 `docs/alfa-visual-tech/` is the curated technical toolbox: *how* to build a visual idea (materials, lighting, optics, geometry,
 transitions, post, performance tiers, interaction, reference rendering). It is not art direction. Sources are traceable (three.js,

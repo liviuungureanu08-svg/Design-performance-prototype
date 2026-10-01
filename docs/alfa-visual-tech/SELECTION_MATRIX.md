@@ -1,6 +1,6 @@
 # Technique Selection Matrix
 
-Start here when a creative spec arrives. **Capability families first, libraries last.** IDs → `CAPABILITY_MAP.md`.
+Start here when an **approved** creative spec arrives (from [ALFA Visual Intelligence](../alfa-visual-intelligence/README.md); no spec → go there first). **Capability families first, libraries last.** IDs → `CAPABILITY_MAP.md`.
 Each row: what to investigate → which recipe → the main trap. Then check `PERFORMANCE.md` for the tier plan.
 
 | If the creative spec requires… | Investigate (families → techniques) | Recipe | Main trap / warning |

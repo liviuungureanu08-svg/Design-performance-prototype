@@ -1,8 +1,11 @@
 # ALFA Technical Visual Intelligence Library
 
 **What this answers:** *HOW can we technically achieve a visual idea?*
-**What it does not answer:** *WHAT should look beautiful?* That's art direction (ALFA Visual Intelligence, separate). A technique being
-listed here does not make it premium, and an example existing upstream doesn't mean it should be used.
+**What it does not answer:** *WHAT should look beautiful?* That's art direction: [ALFA Visual Intelligence](../alfa-visual-intelligence/README.md)
+(separate, decides WHAT + WHY). A technique being listed here does not make it premium, and an example existing upstream doesn't mean it should be used.
+
+**Entry condition:** start here only with an approved visual direction (Visual Intelligence → *Bridge*). Never pick a technique first and
+justify it afterwards. Engineering PASS here never overrides an art-direction FAIL or the Human WOW Gate.
 
 Researched once (2026-10-01) from 8 core + 3 additional trusted sources, read in their source code, plus verified lessons from ALFA's
 own experiments. **Don't read the whole library.** Use the router below and open 1–2 small files.
