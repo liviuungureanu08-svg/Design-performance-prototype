@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#07060d" />
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Ccircle cx=%2716%27 cy=%2716%27 r=%2711%27 fill=%27%23ffb066%27/%3E%3Ccircle cx=%2720%27 cy=%2716%27 r=%2710%27 fill=%27%2305040a%27/%3E%3C/svg%3E" />
+    <title>Ember / Tide — Visual Engineering Lab</title>
+    <meta name="description" content="A scroll-driven transformation in which one image physically becomes another." />
+  </head>
+  <body>
+    <div id="stage">
+      <canvas id="gl" aria-hidden="true"></canvas>
+      <div id="fallback" aria-hidden="true"><canvas id="fb-a"></canvas><canvas id="fb-b"></canvas></div>
+      <div class="vignette"></div>
+      <div class="grain"></div>
+
+      <header class="chrome">
+        <span class="mark">Alfa&nbsp;<i>/</i>&nbsp;Lab</span>
+        <span class="chapter" id="chapter">Ch. 01 — Ember</span>
+      </header>
+
+      <section class="copy copy-a" id="copy-a">
+        <p class="kicker" data-split>Chapter one &middot; Ember</p>
+        <h1 data-split>Everything holds its shape<br /><em>until it doesn&rsquo;t.</em></h1>
+        <p class="lede" data-split>A scene is only matter that has agreed, for a moment, to stay where it is.</p>
+      </section>
+
+      <section class="copy copy-m" id="copy-m">
+        <p data-split>Nothing is lost. Only rearranged.</p>
+      </section>
+
+      <section class="copy copy-b" id="copy-b">
+        <p class="kicker" data-split>Chapter two &middot; Tide</p>
+        <h2 data-split>It was always going<br /><em>to become this.</em></h2>
+        <p class="lede" data-split>Every fragment carried the other image inside it. The light simply took the long way round.</p>
+      </section>
+
+      <footer class="chrome bottom">
+        <span class="hint" id="hint"><b></b>Scroll</span>
+        <span class="meter"><span id="meter"></span></span>
+        <span class="credit">Procedural art &middot; no third-party assets</span>
+      </footer>
+    </div>
+    <div id="runway" aria-hidden="true"></div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
