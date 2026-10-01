@@ -14,6 +14,7 @@ uniform sampler2D tSdf;
 uniform vec4 uRect;
 uniform float uCrack;
 uniform float uWorld;
+uniform float uGlow;     // final crescendo: the light swells as the film ends
 uniform float uZoom;     // >1: the camera is closer to the word (used to arrive from a push-in)
 uniform float uAppear;   // 0: the word is only light  ..  1: carved obsidian
 
@@ -42,8 +43,7 @@ vec3 above(vec2 p, vec2 light, float R) {
   // ---------- backdrop: warm haze that thins into black ----------
   float r = length(p - light);
   vec3 col = vec3(.004, .0035, .007);
-  col += vec3(1., .46, .16) * exp(-r * 4.2) * .15;
-  col += vec3(1., .62, .30) * exp(-r * 9.) * .30;
+  col += (vec3(1., .46, .16) * exp(-r * 4.2) * .15 + vec3(1., .62, .30) * exp(-r * 9.) * .30) * uGlow;
   // soft horizontal band behind the baseline (the horizon the letters stand on)
   col += vec3(.9, .42, .16) * exp(-abs(p.y - FLOOR_Y) * 22.) * exp(-abs(p.x) * 1.6) * .16;
 
@@ -57,11 +57,11 @@ vec3 above(vec2 p, vec2 light, float R) {
     occ *= smoothstep(-.004, .012, sdfAt(sp));
   }
   float rr = length(dir);
-  col += vec3(1., .6, .3) * rays * occ * exp(-rr * 2.1) * .30 * smoothstep(R * 1.0, R * 1.9, rr);
+  col += vec3(1., .6, .3) * rays * occ * exp(-rr * 2.1) * .30 * uGlow * uGlow * smoothstep(R * 1.0, R * 1.9, rr);
 
   // ---------- the drop of light in the O ----------
   float dd = length(p - light);
-  if (dd < R * 1.02) col = mix(col, dropShade(p - light, R), smoothstep(R * 1.02, R * .97, dd));
+  if (dd < R * 1.02) col = mix(col, dropShade(p - light, R) * (.9 + .1 * uGlow), smoothstep(R * 1.02, R * .97, dd));
 
   // ---------- the letters: layered extrusion ----------
   const int N = 12;

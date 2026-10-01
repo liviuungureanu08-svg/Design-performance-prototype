@@ -53,11 +53,10 @@ R2-0 preservation · R2-1 art direction (4 static scenes, quality-gated frozen) 
 ### Verification
 - `tsc --noEmit`, `vite build` (≈580 kB JS, 151 kB gz; no image assets) pass; production bundle checked via `vite preview`.
 - Real Chromium (SwiftShader software GL) stills at 640×360 → 1600×900 and 390×844@3×: every chapter, every transition at 6–10 progress points, boundary seams (transition end ≡ dwell start), fracture early→late, T3 morph sequence. Contact sheets reviewed; defects fixed iteratively.
-- `node scripts/robustness.mjs` (dev or preview server running): wheel slow/fast/reverse PASS · pause mid-transition ×3 PASS · reload keeps position PASS · 7 resize cycles incl. portrait with no GPU resource growth PASS · phone portrait across the film PASS · forced fallback PASS · console clean PASS.
+- `node scripts/robustness.mjs` (dev or preview server running): wheel slow/fast(to the end)/reverse PASS · pause mid-transition ×3 PASS · reload keeps position PASS · 7 resize cycles incl. portrait with no GPU resource growth PASS · phone portrait across the film PASS · forced fallback PASS · console clean PASS.
 
 ### Known limitations
 - **Not measured on a real GPU** (software GL only). The dome ray-march and finale (≈25 SDF fetches/px, ×2 over the mirror floor) are the heavy passes; adaptive scale is the safety net.
-- Headless wheel input is coalesced under software rendering (a fast-wheel run advanced less than requested) — a test-harness artefact, not observed in the page logic.
 - No touch/gyro parallax on phones (ambient drift only). iOS Safari float-target/MSAA behaviour untested.
 - Dome's lit patch is soft; T2's micro-fragments are flat triangles (they read as glass chips in motion, less so in stills). Finale serif tips soften slightly (SDF resolution 1024×512).
 - Static art is procedural and tuned by eye; no reference to any third-party site or asset.

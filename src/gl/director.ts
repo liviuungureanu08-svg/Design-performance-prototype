@@ -38,6 +38,7 @@ export class Director {
     u.uFade.value = 0;
     u.uCrack.value = 0;
 
+    u.uGlow.value = beat.tr < 0 && beat.scene === 3 ? 1 + 0.5 * smoothstep(0.3, 1, beat.s) : 1;
     if (this.debug) {
       this.scene(this.debug.scene, e.rtComp, look, this.debug.z);
     } else if (beat.tr < 0) {
@@ -62,18 +63,18 @@ export class Director {
     const e = this.eng;
     const u = e.u;
     this.scene(2, e.rtFrom, look, 0);
-    u.uAppear.value = smoothstep(0.78, 1.0, p);
+    u.uAppear.value = smoothstep(0.8, 1.0, p);
     // while the light floods the frame the camera surges toward the word, then settles back onto it
-    u.uZoom.value = 1 + 0.30 * smoothstep(0.66, 0.84, p) * (1 - smoothstep(0.84, 1.0, p));
+    u.uZoom.value = 1 + 0.30 * smoothstep(0.7, 0.86, p) * (1 - smoothstep(0.86, 1.0, p));
     this.scene(3, e.rtTo, look, 0);
     u.uAppear.value = 1;
     u.uZoom.value = 1;
     u.tFrom.value = e.rtFrom.texture;
     u.tTo.value = e.rtTo.texture;
     u.uP.value = p;
-    u.uRipple.value = Math.sin(Math.PI * smoothstep(0, 0.45, p));
-    u.uOpen.value = smoothstep(0.04, 0.2, p);
-    u.uMorph.value = smoothstep(0.22, 0.62, p);
+    u.uRipple.value = Math.sin(Math.PI * smoothstep(0, 0.4, p));
+    u.uOpen.value = smoothstep(0.04, 0.18, p);
+    u.uMorph.value = smoothstep(0.2, 0.5, p);
     u.uFlood.value = Math.pow(smoothstep(0.68, 1.0, p), 1.6) * 1.7;
     e.pass('liquid', e.rtComp);
   }

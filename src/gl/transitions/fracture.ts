@@ -292,18 +292,19 @@ void main() {
     // ---- front face: the dome, seen through a slab of glass ----
     vec2 scr = gl_FragCoord.xy / vec2(textureSize(tTo, 0));
     vec3 img = texture2D(tFrom, uv).rgb;
-    img /= 1. + .55 * luma(img);
+    float gone = smoothstep(0., .2, vTau);
+    img = mix(img, img / (1. + .55 * luma(img)), gone);   // identical to the dwell image until a slab actually moves
     float e = vMisc.x;
     float edge = 1. - smoothstep(0., .012, e);
     // glassy bevel refracts the world behind it
     vec2 off = N.xy * .035 * edge;
     vec3 behind = texture2D(tTo, scr + off).rgb;
-    col = mix(img * .82, behind * 1.1 + vec3(.10, .12, .16), edge * .4 * smoothstep(0., .12, vTau));
+    col = mix(img * mix(1., .82, gone), behind * 1.1 + vec3(.10, .12, .16), edge * .4 * smoothstep(0., .12, vTau));
     // broad specular + fresnel
     vec3 R = reflect(-L, N);
     float spec = pow(max(dot(R, V), 0.), 26.) * 1.1;
     float fres = pow(1. - abs(dot(N, V)), 3.);
-    col += vec3(1., .86, .66) * spec * (.25 + .5 * vTau * 3.);
+    col += vec3(1., .86, .66) * spec * (.25 + .5 * vTau * 3.) * gone;
     col += vec3(.55, .75, 1.) * fres * .18 * vTau;
     // light leaking out of the cracks
     float flick = .55 + .45 * vnoise(vRest * 38. + uTime * .5);
@@ -375,7 +376,7 @@ void main() {
   float swap = smoothstep(.05, .30, uP);
   vec3 sky = texture2D(tFrom, vUv).rgb;
   vec3 col = world;
-  float inHole = smoothstep(uHoleR + .004, uHoleR - .004, d);
+  float inHole = smoothstep(uHoleR + .014, uHoleR + .007, d);   // slightly wider than the slabs' cut-out so no seam shows at its edge
   col = mix(world, mix(sky, world, swap), inHole);
   gl_FragColor = vec4(col, 1.);
 }`;

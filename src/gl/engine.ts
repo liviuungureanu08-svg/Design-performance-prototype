@@ -136,6 +136,7 @@ export class Engine {
       uAppear: { value: 1 },
       uWorld: { value: 1 },
       uZoom: { value: 1 },
+      uGlow: { value: 1 },
       uRect: { value: new THREE.Vector4(-1.2, -0.6, 2.4, 1.2) },
     };
 

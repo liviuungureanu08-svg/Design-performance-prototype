@@ -125,10 +125,10 @@ function frame(now: number): void {
 
   // typography: in on arrival, out as the next event begins; silence in between
   const intro = clamp01((now - t0 - 600) / 1700);
-  copies[0].update(intro, smoothstep(0.075, 0.125, u));
-  copies[1].update(smoothstep(0.285, 0.33, u), smoothstep(0.385, 0.425, u));
-  copies[2].update(smoothstep(0.625, 0.67, u), smoothstep(0.715, 0.755, u));
-  copies[3].update(smoothstep(0.93, 0.975, u), 0);
+  copies[0].update(intro, smoothstep(0.07, 0.115, u));
+  copies[1].update(smoothstep(0.275, 0.32, u), smoothstep(0.375, 0.415, u));
+  copies[2].update(smoothstep(0.62, 0.665, u), smoothstep(0.705, 0.745, u));
+  copies[3].update(smoothstep(0.935, 0.975, u), 0);
 
   const idx = beat.tr < 0 ? beat.scene : beat.p > 0.5 ? beat.scene + 1 : beat.scene;
   if (chapter.dataset.i !== String(idx)) {
