@@ -41,6 +41,11 @@ Unresolved: ~0–12% is quiet (the anticipation is subtle at full-sheet scale); 
 and below the landscape-shaped object; Scene B lowers overall key (desk becomes slate-charcoal); verified only in
 software GL (SwiftShader), never on a real phone GPU.
 
+Review preview (private until shared): https://claude.ai/artifact/QV3Tyms5JY3kiFaigGkLrF (= `artifact/exp02.html`).
+Verification: typecheck + build clean; packed page console clean; real-scroll robustness (slow forward, jump+pause, fast
+reverse, flick, resize) correct; fallback poster and portrait checked; reduced motion = shorter inertia only (logic,
+not visually verified in the packed build); all in SwiftShader, no frame-rate or phone-GPU measurement.
+
 Run: `npm run dev` → `/exp02.html` (`?debug`, `?u=0.5` pins progress, `?fallback=1` shows the printed poster).
 `PAGE=exp02.html node scripts/strip.mjs "" m 0 1 0.0625` contact sheet; `node scripts/pack-artifact.mjs exp02` → `artifact/exp02.html`;
 `node scripts/robust02.mjs` (serve `artifact/` on :8099).
