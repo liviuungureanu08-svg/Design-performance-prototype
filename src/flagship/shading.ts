@@ -23,6 +23,13 @@ export const U = {
   uEnvK: { value: 1 },
   uFill: { value: 0 },
   uFlagOff: { value: 0 },
+  // luminous ceiling: a line light under the lintel, running the full depth of the hidden hall
+  uCeilA: { value: new THREE.Vector3(0, 9.0, -2.8) },
+  uCeilB: { value: new THREE.Vector3(0, 9.0, 2.8) },
+  uCeilI: { value: 0 },
+  uCeilE: { value: 0 },
+  uCeilX: { value: 0 },
+  uCeilHW: { value: 0.03 },
 };
 
 const COMMON = /* glsl */ `
@@ -30,6 +37,8 @@ varying vec3 vWPos; varying vec3 vOPos; varying vec3 vONor; varying vec3 vWNor;
 uniform vec3 uBoxMin[4]; uniform vec3 uBoxMax[4];
 uniform vec3 uSlotA; uniform vec3 uSlotB; uniform vec3 uSlotCol; uniform float uSlotI; uniform float uSlotE;
 uniform float uStripAz, uStripW, uStripI, uStripY, uDev, uDevY, uGlow, uGlowW, uEnvK, uFill, uFlagOff;
+uniform vec3 uCeilA; uniform vec3 uCeilB; uniform float uCeilI, uCeilE, uCeilX, uCeilHW;
+uniform vec3 uInnerAxis; uniform vec3 uInnerCol; uniform float uInnerRough;
 
 float h31(vec3 p){ p = fract(p*0.3183099+vec3(.1,.2,.3)); p *= 17.0; return fract(p.x*p.y*p.z*(p.x+p.y+p.z)); }
 float vnoise(vec3 x){
@@ -59,22 +68,47 @@ vec3 bumpN(vec3 pos, vec3 n, float h, float k){
 }
 `;
 
+const LINE = /* glsl */ `
+// diffuse irradiance from a sampled line emitter with per-sample occlusion against the live slabs
+vec3 lineIrr(vec3 Pw, vec3 ro, vec3 Ng, vec3 Nv, vec3 A, vec3 B, vec3 en, float I, float soft) {
+  vec3 acc = vec3(0.0);
+  float len = distance(A, B);
+  for (int i = 0; i < 8; i++) {
+    vec3 Pl = mix(A, B, (float(i) + 0.5) / 8.0);
+    vec3 Ld = Pl - Pw; float d = length(Ld); Ld /= d;
+    float facing = dot(-Ld, en);
+    float gn = smoothstep(0.0, 0.12, dot(Ng, Ld));
+    if (facing <= 0.0 || gn <= 0.0) continue;
+    if (sceneHit(ro, Ld) < d - 0.06) continue;
+    float dotNL = saturate(dot(Nv, normalize(mat3(viewMatrix) * Ld)));
+    acc += vec3(I * facing * gn * dotNL * (len / 8.0) / (d * d + soft));
+  }
+  return acc;
+}
+`;
+
 export type Kind = 'mineral' | 'floor' | 'metal' | 'glass' | 'ground';
 
 /** Patches a MeshPhysicalMaterial with the shared analytic lighting / occlusion / surface-light anchor. */
-export function patch(mat: THREE.MeshPhysicalMaterial, kind: Kind, opts: { anchor?: boolean; seamY?: number } = {}): void {
+export interface Inner { axis: [number, number, number]; color: number; rough: number }
+export function patch(mat: THREE.MeshPhysicalMaterial, kind: Kind, opts: { anchor?: boolean; seamY?: number; inner?: Inner; ceilEmit?: boolean } = {}): void {
+  const own = {
+    uInnerAxis: { value: new THREE.Vector3(...(opts.inner?.axis ?? [0, 0, 0])) },
+    uInnerCol: { value: new THREE.Color(opts.inner?.color ?? 0) },
+    uInnerRough: { value: opts.inner?.rough ?? 0.5 },
+  };
   const seamY = opts.seamY ?? 1.1;
   mat.onBeforeCompile = (sh) => {
-    Object.assign(sh.uniforms, U);
+    Object.assign(sh.uniforms, U, own);
     sh.vertexShader = sh.vertexShader
       .replace('#include <common>', '#include <common>\nvarying vec3 vWPos; varying vec3 vOPos; varying vec3 vONor; varying vec3 vWNor;')
       .replace('#include <begin_vertex>', '#include <begin_vertex>\nvOPos = position; vONor = normal;')
       .replace('#include <project_vertex>', '#include <project_vertex>\nvWPos = (modelMatrix * vec4(transformed,1.0)).xyz; vWNor = normalize(mat3(modelMatrix) * objectNormal);');
 
-    const defs = [kind === 'mineral' || kind === 'floor' ? '#define MINERAL' : '', kind === 'floor' ? '#define FLOORGRID' : '', opts.anchor ? '#define ANCHOR' : '', `#define SEAMY ${seamY.toFixed(3)}`].join('\n');
+    const defs = [kind === 'mineral' || kind === 'floor' ? '#define MINERAL' : '', kind === 'floor' ? '#define FLOORGRID' : '', opts.anchor ? '#define ANCHOR' : '', opts.inner ? '#define INNER' : '', opts.ceilEmit ? '#define CEILEMIT' : '', `#define SEAMY ${seamY.toFixed(3)}`].join('\n');
 
     sh.fragmentShader = sh.fragmentShader
-      .replace('#include <common>', `#include <common>\n${defs}\n${COMMON}`)
+      .replace('#include <common>', `#include <common>\n${defs}\n${COMMON}\n${LINE}`)
       .replace(
         '#include <roughnessmap_fragment>',
         /* glsl */ `#include <roughnessmap_fragment>
@@ -95,6 +129,12 @@ export function patch(mat: THREE.MeshPhysicalMaterial, kind: Kind, opts: { ancho
   float n1 = vnoise(vOPos*0.7), n2 = vnoise(vOPos*4.0), n3 = vnoise(vOPos*17.0);
   roughnessFactor = clamp(roughnessFactor + (n1-0.5)*0.22 + (n2-0.5)*0.07 + (n3-0.5)*0.05 + seamG*0.1, 0.1, 0.92);
   diffuseColor.rgb *= 1.0 - 0.5*seamG;
+#endif
+#ifdef INNER
+  // the hidden faces: a pale honed stone, never seen from outside except through the seam
+  float innerK = smoothstep(0.55, 0.95, dot(normalize(vONor), uInnerAxis));
+  diffuseColor.rgb = mix(diffuseColor.rgb, uInnerCol * (0.92 + 0.16 * vnoise(vOPos * 1.3)) * (1.0 - 0.55 * seamG), innerK);
+  roughnessFactor = mix(roughnessFactor, uInnerRough + (vnoise(vOPos * 6.0) - 0.5) * 0.12, innerK);
 #endif`
       )
       .replace(
@@ -141,23 +181,12 @@ export function patch(mat: THREE.MeshPhysicalMaterial, kind: Kind, opts: { ancho
   // --- the slot: a real vertical line light, sampled, with per-sample occlusion
   float specOccSlot = 1.0;
   { float tq = sceneHit(ro, Rw); if (tq < 9e4 && Rw.z < -0.001) { float ts = (uSlotA.z - Pw.z) / Rw.z; specOccSlot = tq < ts - 0.05 ? 0.0 : 1.0; } }
-  if (uSlotI > 0.001) {
-    const int NS = 9;
-    float len = distance(uSlotA, uSlotB);
-    for (int i = 0; i < NS; i++) {
-      float f = (float(i) + 0.5) / float(NS);
-      vec3 Pl = mix(uSlotA, uSlotB, f);
-      vec3 Ld = Pl - Pw; float d = length(Ld); Ld /= d;
-      float facing = -Ld.z;
-      if (facing <= 0.0 || Pw.z < uSlotA.z + 0.35) continue;
-      float gn = smoothstep(0.0, 0.12, dot(normalize(vWNor), Ld));
-      if (gn <= 0.0) continue;
-      float tH = sceneHit(ro, Ld);
-      if (tH < d - 0.06) continue;
-      float dotNL = saturate(dot(geometryNormal, normalize(mat3(viewMatrix) * Ld)));
-      vec3 irr = uSlotCol * uSlotI * facing * gn * dotNL * (len / float(NS)) / (d*d + 0.3);
-      reflectedLight.directDiffuse += irr * BRDF_Lambert(material.diffuseColor);
-    }
+  vec3 Ngw = normalize(vWNor);
+  if (uSlotI > 0.001 && Pw.z > uSlotA.z + 0.35) {
+    reflectedLight.directDiffuse += uSlotCol * lineIrr(Pw, ro, Ngw, geometryNormal, uSlotA, uSlotB, vec3(0.0, 0.0, 1.0), uSlotI, 0.3) * BRDF_Lambert(material.diffuseColor);
+  }
+  if (uCeilI > 0.001) {
+    reflectedLight.directDiffuse += uSlotCol * lineIrr(Pw, ro, Ngw, geometryNormal, uCeilA, uCeilB, vec3(0.0, -1.0, 0.0), uCeilI, 1.0) * BRDF_Lambert(material.diffuseColor);
   }
   // glossy mirror image of the slot itself: analytic rectangle reflection, edges blurred by roughness and by pixel footprint
   {
@@ -174,6 +203,14 @@ export function patch(mat: THREE.MeshPhysicalMaterial, kind: Kind, opts: { ancho
     reflectedLight.directSpecular += min(uSlotCol * uSlotE * Fs * cx * cy * specOccSlot, vec3(2.5)) * on;
   }
 
+  #ifdef CEILEMIT
+  {
+    float under = smoothstep(-0.8, -0.98, vONor.y);
+    float strip = 1.0 - smoothstep(uCeilHW * 0.6, uCeilHW, abs(Pw.x - uCeilX));
+    float along = smoothstep(uCeilA.z - 0.05, uCeilA.z + 0.3, Pw.z) * (1.0 - smoothstep(uCeilB.z - 0.3, uCeilB.z + 0.05, Pw.z));
+    totalEmissiveRadiance += uSlotCol * uCeilE * under * strip * along;
+  }
+  #endif
   #ifdef ANCHOR
   {
     // THE ANCHOR. Phase 1: a reflection of a strip light on the seam bevel. Phase 2: it deviates and leaves the surface.
@@ -215,5 +252,5 @@ export function patch(mat: THREE.MeshPhysicalMaterial, kind: Kind, opts: { ancho
 `
       );
   };
-  mat.customProgramCacheKey = () => `${kind}-${opts.anchor ? 1 : 0}-${seamY}`;
+  mat.customProgramCacheKey = () => `${kind}-${opts.anchor ? 1 : 0}-${seamY}-${opts.inner ? 1 : 0}-${opts.ceilEmit ? 1 : 0}`;
 }

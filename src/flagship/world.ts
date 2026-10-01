@@ -4,7 +4,7 @@ import { Reflector } from 'three/examples/jsm/objects/Reflector.js';
 import { U, patch } from './shading';
 
 type V3 = [number, number, number];
-export const EPS = 0.015;
+export const EPS = 0.03;
 /** Rest ("closed monolith") bounds in world units. Everything below is authored as ONE building; the exterior is just its closed state. */
 export const REST = {
   L: { min: [-1.9, 0, -2.8] as V3, max: [-EPS, 9.0, 2.8] as V3 }, // tall mass            -> left wall
@@ -43,22 +43,26 @@ export class World {
     s.fog = new THREE.Fog(0x020203, 30, 80);
 
     // --- dark mineral: low base roughness, strong spatial variation (injected), no clearcoat, restrained specular
-    const mineral = (color: number, rough: number, seamY = 0.85) => {
+    // hidden faces carry a different finish: the interior is lighter than the object that contains it
+    const INNER = 0x8f897f;
+    const mineral = (color: number, rough: number, inner?: [number, number, number]) => {
       const m = new THREE.MeshPhysicalMaterial({ color, roughness: rough, metalness: 0, specularIntensity: 0.55, ior: 1.5 });
-      patch(m, 'mineral', { seamY });
+      patch(m, 'mineral', inner ? { inner: { axis: inner, color: INNER, rough: 0.55 } } : {});
       return m;
     };
     const mL = new THREE.MeshPhysicalMaterial({ color: 0x232427, roughness: 0.3, metalness: 0, specularIntensity: 0.6 });
-    patch(mL, 'mineral', { anchor: true });
-    const mR = mineral(0x28292c, 0.4);
-    const mK = mineral(0x151618, 0.45);
+    patch(mL, 'mineral', { anchor: true, inner: { axis: [1, 0, 0], color: INNER, rough: 0.55 } });
+    const mR = mineral(0x28292c, 0.4, [-1, 0, 0]);
+    const mK = mineral(0x151618, 0.45, [0, 0, 1]);
     const mFloor = new THREE.MeshPhysicalMaterial({ color: 0x131416, roughness: 0.2, metalness: 0, specularIntensity: 0.8 });
     patch(mFloor, 'floor');
     const mMetal = new THREE.MeshPhysicalMaterial({ color: 0x7a7c82, roughness: 0.3, metalness: 1, anisotropy: 0.75, anisotropyRotation: 0 });
     patch(mMetal, 'metal');
+    const mCap = mMetal.clone();
+    patch(mCap, 'metal', { ceilEmit: true });
     this.glass = new THREE.MeshPhysicalMaterial({
       color: 0xa9abb0, roughness: 0.07, metalness: 0, transmission: 1, thickness: 0.5, ior: 1.52,
-      attenuationColor: new THREE.Color(0x6a6b72), attenuationDistance: 0.7, specularIntensity: 0.8, envMapIntensity: 0.28,
+      attenuationColor: new THREE.Color(0x9a9ba1), attenuationDistance: 1.6, specularIntensity: 0.8, envMapIntensity: 0.28,
     });
     patch(this.glass, 'glass');
 
@@ -69,7 +73,7 @@ export class World {
     };
     this.L = mk(REST.L, mL, 0.1, 4);
     this.R = mk(REST.R, mR, 0.1, 4);
-    this.C = mk(REST.C, mMetal, 0.03);
+    this.C = mk(REST.C, mCap, 0.03);
     this.K = mk(REST.K, mK, 0.03);
     this.B = mk(REST.B, mFloor, 0.03);
 
@@ -142,6 +146,14 @@ export class World {
     set(1, REST.R, this.R);
     set(2, REST.C, this.C);
     set(3, REST.K, this.K);
+    // the luminous ceiling runs along the hidden hall's axis, just under the lintel, from the end wall to the mouth
+    const lIn = U.uBoxMax.value[0].x, rIn = U.uBoxMin.value[1].x;
+    // fixed on the seam plane x = 0: the exterior seam, the end-wall slot and this ceiling line are one axis
+    const cx = 0, cy = U.uBoxMin.value[2].y - 0.02;
+    U.uCeilA.value.set(cx, cy, U.uBoxMax.value[3].z + 0.05);
+    U.uCeilB.value.set(cx, cy, REST.L.max[2]);
+    U.uCeilX.value = cx;
+    U.uCeilHW.value = Math.min(0.05, Math.max(0.02, (rIn - lIn) / 2 - 0.05));
     // slot rides on K
     U.uSlotA.value.set(0, 0.3, REST.K.max[2] + 0.02).add(new THREE.Vector3(0, 0, this.K.position.z));
     U.uSlotB.value.set(0, 4.0, REST.K.max[2] + 0.02).add(new THREE.Vector3(0, 0, this.K.position.z));

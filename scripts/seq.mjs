@@ -14,7 +14,7 @@ await page.waitForTimeout(4000);
 if (process.env.HIDE) await page.evaluate((h) => h.split(',').forEach((n) => (window.__lab.world[n].visible = false)), process.env.HIDE);
 for (const u of list.split(',')) {
   await page.evaluate((v) => window.__lab.set(Number(v)), u);
-  await page.waitForTimeout(900);
+  await page.waitForTimeout(Number(process.env.WAIT ?? 900));
   await page.screenshot({ path: `/tmp/claude-0/s/${prefix}-${u}.png` });
 }
 console.log(errs.length ? [...new Set(errs)].slice(0, 4).join('\n') : 'console clean');
