@@ -4,6 +4,7 @@
 |---|---|---|
 | Flagship 01 — Monolith / Inner Architecture | `index.html` (`src/main.ts`, `src/flagship/`) | **CLOSED as R&D.** Technical PASS · spatial transition PASS · premium art direction PARTIAL · human wow NOT ACHIEVED · productization NOT YET. Reusable idea: spatial entry / scale reinterpretation (exterior object → entry → scale change → navigable interior); possible future use = spatial portfolio navigation (future context only, not implemented). Final state: commit `63ab9be`, local tag `flagship01-final` (tag push refused by the remote). |
 | Experiment 02 — The Vale of Orrin (semantic material transformation) | `exp02.html` (`src/exp02/`) | Gates A–C self-assessed PASS, D partial, E done in software GL. **Awaiting human review. Not approved, not reusable/productizable until a human says so.** |
+| Experiment 03 — The Unbuilt (Gabriel Solutions, static endpoint proof) | `exp03.html` (`src/exp03/`) | Two static endpoints only (no transition, no animation). **HUMAN STATIC REVIEW REQUIRED.** Not approved for motion. |
 
 ## Agent guidance: visual work
 Two separate libraries, used in this order and never both loaded whole by default:
@@ -26,6 +27,43 @@ drei, R3F, LYGIA, three-mesh-bvh, three-gpu-pathtracer, canvas-sketch, Book of S
 Khronos glTF sample assets), labelled `[EXTERNAL]` / `[ALFA-PROVEN]`, with licenses. LYGIA and the Book of Shaders are not usable as code in commercial work.
 Future agents: read `docs/alfa-visual-tech/README.md` (router), then `SELECTION_MATRIX.md`, then only the 1–2 files it names. Don't read the whole library.
 No dependencies were added for it.
+
+## Experiment 03 — The Unbuilt (static endpoints only)
+**Thesis: imagination becomes structure.** Brand: Gabriel Solutions. Hero object (internal name *The Fold*): one thick band,
+folded three times about skewed fold lines into an asymmetric loop that never closes, split along its whole length by a
+30 mm slit, **the Spine**. Everything derives from one flat development (`design.ts` → `fold.ts`: a developable folding map
+with real bend radii), so A and B are literally the same object, seen through the same 60 mm lens at eye level.
+
+Hidden generative logic (never labelled): seg 1 *understand* lies on the ground (the only contact with the world) → seg 2
+*design* lifts and turns → seg 3 *build* is the bearing plane → seg 4 *amplify*, the widest, pitches back toward its own
+beginning and stops in the air, higher and offset: output overhangs input; the loop climbs instead of closing. The plates
+widen along the band; the Spine is the one constant they grow around.
+
+| Scene B (built) | came from (Scene A, unbuilt) |
+|---|---|
+| top and descending planes | plates that recede diagonally toward the Spine, then a faint haze of light where the surface will be |
+| physical outer edges | edge hairlines of light that outlive their receding plates, then fade |
+| the slit as a precise shadow gap, and a line of sunlight passing through it inside the cast shadow | the Spine continuing as emitted blue light out of the last rib, round the last fold, fading before the loop would close |
+| daylight from one opening (warm, physical, received) | blue light emitted by the possibility (no sun, a night room; warm light only on the made part) |
+| the open gap between the last plane and the base | the same gap: the spine light dies out before reaching it |
+
+Rendering (`scene.ts`): plain three.js raster converged like a photograph: every pass jitters the sub-pixel offset, each light
+across its emitting area (soft shadows) and one shadowed sky direction (sky occlusion); passes are averaged (128 by default),
+then AgX + dither. No bloom, no post. Ceramic = dark satin with roughness-only microstructure; reflections come from a
+cube capture of the scene itself (its sunlit floor and shaded wall). The light in A is additive geometry (core + soft
+falloff) plus a few real point lights so it actually lights the ribs and floor. Daylight in B = a distant spot whose cookie
+is the window opening. Nothing animates: the page renders, converges, stops (a 1 px hairline shows convergence).
+
+Review: `npm run dev` → `/exp03.html?view=a | b | ab | sil` (`?spp=` passes; `?cam=px,py,pz,tx,ty,tz,fov`, `?p=key:value,…`
+design overrides, `?clay` are look-dev only). Stills (128 spp, SwiftShader): `artifact/exp03/` (A, B, A/B, silhouette,
+portrait 390×844). Single-file page: `node scripts/pack-artifact.mjs exp03` → `artifact/exp03.html`.
+`node scripts/shot03.mjs "view=a" out.png 1920x1080` captures after convergence.
+
+Known weaknesses (self-critique): B is calm and precise but may read as a quiet product render rather than "spectacular";
+its sunlit faces lean warm-brown; the line of sunlight through the Spine inside B's shadow is subtle at full-frame size; in A
+the edge hairlines can still be read as an outline by some viewers, and a small blue point remains where the light leaves the
+last rib; the B wall's sunlit band sits at the frame edge; portrait is recentred, not individually art-directed; verified
+only in software GL (SwiftShader), a real GPU converges in seconds but was not measured.
 
 ## Experiment 02 — The Vale of Orrin
 **Concept: map → territory.** Scene A is a printed survey sheet (contour map with hypsometric tints, engraved

@@ -1,0 +1,32 @@
+:root {
+  --ink: #e9e6e0;
+  --ink-dim: rgba(233, 230, 224, 0.62);
+  --bg: #0f1116;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; background: var(--bg); color: var(--ink); }
+body { font-family: 'Inter Variable', system-ui, sans-serif; overflow: hidden; }
+#views { position: fixed; inset: 0; display: flex; }
+body[data-view='ab'] #views, body[data-view='sil'] #views { gap: 2px; background: #000; }
+@media (max-aspect-ratio: 1/1) { body[data-view='ab'] #views, body[data-view='sil'] #views { flex-direction: column; } }
+.cell { position: relative; flex: 1 1 0; margin: 0; overflow: hidden; min-width: 0; min-height: 0; }
+.cell canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.type { position: absolute; inset: 0; pointer-events: none; padding: clamp(20px, 4.2vmin, 56px) clamp(16px, 5vmin, 72px); }
+.brand { font-size: clamp(10px, 1.05vmin, 13px); letter-spacing: 0.32em; text-transform: uppercase; font-weight: 500; color: var(--ink-dim); }
+.thesis {
+  position: absolute; margin: 0; font-weight: 300; letter-spacing: -0.012em; line-height: 1.04;
+  font-size: clamp(22px, 4.1vmin, 56px); color: var(--ink);
+  left: clamp(16px, 5vmin, 72px); bottom: clamp(26px, 6.5vmin, 88px);
+}
+figcaption { position: absolute; left: 16px; top: 12px; font: 600 12px/1 'Inter Variable', sans-serif; letter-spacing: 0.2em; color: #222; }
+body[data-view='ab'] .thesis { font-size: clamp(16px, 2.6vmin, 34px); }
+#review { position: fixed; right: 16px; top: 12px; display: flex; gap: 2px; z-index: 2; font-size: 11px; letter-spacing: 0.06em; }
+#review a { color: rgba(233, 230, 224, 0.55); text-decoration: none; padding: 6px 9px; border-radius: 3px; background: rgba(10, 12, 16, 0.35); }
+#review a[aria-current] { color: #fff; background: rgba(10, 12, 16, 0.7); }
+@media (max-width: 600px) {
+  #review { top: auto; bottom: 10px; right: 8px; left: 8px; justify-content: center; }
+  .thesis { bottom: 64px; }
+}
+/* convergence hairline while an image is still resolving (not animation: it disappears when the still is done) */
+.cell::after { content: ''; position: absolute; left: 0; top: 0; height: 1px; width: calc(var(--p, 0) * 100%); background: rgba(233, 230, 224, 0.35); }
+.cell.converged::after { display: none; }
