@@ -9,7 +9,7 @@ const page = await browser.newPage({ viewport: { width: w, height: h }, deviceSc
 const errs = [];
 page.on('console', (m) => ['error', 'warning'].includes(m.type()) && errs.push(m.text().slice(0, 900)));
 page.on('pageerror', (e) => errs.push('pageerror ' + e.message));
-await page.goto(`http://localhost:${process.env.PORT ?? 5173}/?debug&noadapt&${q}`, { waitUntil: 'load' });
+await page.goto(`http://localhost:${process.env.PORT ?? 5173}/${process.env.PAGE ?? ""}?debug&noadapt&${q}`, { waitUntil: 'load' });
 await page.waitForTimeout(4000);
 if (process.env.HIDE) await page.evaluate((h) => h.split(',').forEach((n) => (window.__lab.world[n].visible = false)), process.env.HIDE);
 for (const u of list.split(',')) {

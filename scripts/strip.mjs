@@ -10,7 +10,7 @@ const page = await browser.newPage({ viewport: { width: w, height: h } });
 const errs = [];
 page.on('console', (m) => ['error', 'warning'].includes(m.type()) && errs.push(m.text().slice(0, 400)));
 page.on('pageerror', (e) => errs.push('pageerror ' + e.message));
-await page.goto(`http://localhost:5173/?debug&noadapt&${q}`, { waitUntil: 'load' });
+await page.goto(`http://localhost:5173/${process.env.PAGE ?? ""}?debug&noadapt&${q}`, { waitUntil: 'load' });
 await page.waitForTimeout(3500);
 const files = [];
 for (let u = Number(a); u <= Number(b) + 1e-6; u += Number(st)) {
