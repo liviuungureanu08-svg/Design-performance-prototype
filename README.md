@@ -64,6 +64,9 @@ R2-0 preservation · R2-1 art direction (4 static scenes, quality-gated frozen) 
 ### Harvest candidates (not extracted yet — proof first)
 `PortalTransition` (lensing rim + per-layer dolly), `GlassShellFracture` (Voronoi→jag→slab + vertex-shader motion), `SdfMaskMorph` (circle→type→flood with meniscus), `DepthLayerScene` (analytic parallax layers), `HdrPost` (bloom/ACES/grain), `CinematicScrollTimeline` (dwell/transition beats + tempo curves).
 
+## Preview
+`node scripts/pack-artifact.mjs` packs the production build into one self-contained HTML fragment (`artifact/index.html`, ≈1 MB, inline JS/CSS, fonts as data: URIs) for hosting as a claude.ai Artifact. Published privately (owner login required); it has been verified locally inside a skeleton-style wrapper, not inside the Artifact viewer's own sandbox.
+
 ## How to run
 ```bash
 npm install
