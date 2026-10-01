@@ -153,7 +153,7 @@ export class CinematicTransition {
 
     // Fit like `object-fit: cover`, with margin for parallax and depth scale.
     const planeW = 2 * (ART_W / ART_H);
-    const visibleH = Math.max(2, planeW / this.camera.aspect);
+    const visibleH = Math.min(2, planeW / this.camera.aspect);
     this.camDist = visibleH / 2 / Math.tan((FOV * Math.PI) / 360);
     this.uniforms.uCamDist.value = this.camDist;
     const s = (this.camDist + 0.8) / this.camDist;

@@ -73,7 +73,9 @@ node scripts/robustness.mjs
 
 - `tsc --noEmit` and `vite build` pass.
 - Real Chromium (SwiftShader): scene A, build-up, ring field, convergence, scene B captured at fixed progress; console clean.
-- `scripts/robustness.mjs`: wheel slow/rapid/reverse, reload at mid-scroll, 5 resize cycles with GPU texture/geometry counters, 390×844 @3× phone, forced fallback.
+- `scripts/robustness.mjs` (run at 480×270, `?q=balanced`, software GL): wheel advance PASS, reverse scroll PASS, reload at mid-scroll keeps position PASS, 5 resize cycles with no texture/geometry growth (6 textures / 2 geometries, constant) PASS, forced fallback engages PASS, console clean.
+- 390×844 phone: found and fixed a cover-fit bug (portrait was letterboxed); re-verified start/mid/end fill the screen (`scripts/phone.mjs`).
+- Not verified: real-GPU frame rate; fallback visual quality beyond engaging; 2× DPR on real hardware.
 
 ## Next
 
