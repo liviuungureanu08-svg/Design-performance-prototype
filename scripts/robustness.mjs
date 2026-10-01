@@ -6,7 +6,7 @@ const browser = await chromium.launch({ executablePath: exe, args: ['--use-angle
 const url = `http://localhost:${process.env.PORT ?? 5173}/?debug&noadapt`;
 const errs = [];
 const res = [];
-const ok = (n, c) => { res.push(`${c ? 'PASS' : 'FAIL'} ${n}`); };
+const ok = (n, c) => { const l = `${c ? 'PASS' : 'FAIL'} ${n}`; res.push(l); console.log(l); };
 const page = await browser.newPage({ viewport: { width: 800, height: 450 } });
 page.on('console', (m) => ['error', 'warning'].includes(m.type()) && errs.push(m.text().slice(0, 300)));
 page.on('pageerror', (e) => errs.push('pageerror ' + e.message));
@@ -32,12 +32,12 @@ const m0 = await page.evaluate(() => window.__lab.info().memory);
 for (const [w, h] of [[1000, 600], [400, 800], [1280, 720], [500, 900], [800, 450], [390, 844], [900, 500]]) { await page.setViewportSize({ width: w, height: h }); await page.waitForTimeout(700); }
 const m1 = await page.evaluate(() => window.__lab.info().memory);
 ok(`resize cycles: no GPU resource growth (${JSON.stringify(m0)} -> ${JSON.stringify(m1)})`, m1.textures <= m0.textures + 2 && m1.geometries <= m0.geometries);
+await page.close();
 const fb = await browser.newPage({ viewport: { width: 600, height: 400 } });
-await fb.goto(url.replace('?debug', '?fallback=1&debug'), { waitUntil: 'load' }); await fb.waitForTimeout(800);
-ok('forced fallback shows poster', await fb.evaluate(() => document.body.classList.contains('no-gl')));
+await fb.goto(url.replace('?debug', '?fallback=1&debug'), { waitUntil: 'load' }); await fb.waitForTimeout(800); const fbOk = await fb.evaluate(() => document.body.classList.contains('no-gl')); await fb.close(); ok('forced fallback shows poster', fbOk);
+
 const rm = await browser.newPage({ viewport: { width: 600, height: 400 }, reducedMotion: 'reduce' });
 await rm.goto(url, { waitUntil: 'load' }); await rm.waitForTimeout(2500);
 ok('reduced-motion page renders', await rm.evaluate(() => !document.body.classList.contains('no-gl')));
 ok(`console clean (${[...new Set(errs)].slice(0, 3).join(' | ')})`, errs.length === 0);
-console.log(res.join('\n'));
 await browser.close();
