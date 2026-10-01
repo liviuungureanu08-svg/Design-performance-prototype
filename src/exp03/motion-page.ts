@@ -4,6 +4,7 @@ import * as THREE from 'three';
 import { SmoothDamp } from '../scroll';
 import { Stage, type SceneId } from './scene';
 import { choreo } from './motion';
+import { makeDiag } from './diag';
 
 type Shot = (id: SceneId, aspect: number) => { pos: THREE.Vector3; target: THREE.Vector3; fov: number };
 
@@ -28,12 +29,15 @@ export function runMotion(shot: Shot, params: URLSearchParams, typeHtml: string,
   // investigator offset (look-dev override: ?off=dx,dy,dz,tx,ty)
   const off = (params.get('off') ?? '-0.95,0.32,-0.7,0.12,0.06').split(',').map(Number);
 
+  const diag = makeDiag(params.has('diag')); // debug-only device report
   const gl = document.createElement('canvas');
   let stage: Stage;
   try {
     stage = new Stage(gl, { spp, params: over });
+    diag.report(stage.renderer, gl);
     stage.initMotion();
   } catch (e) {
+    diag.log('stage init failed: ' + String(e));
     console.warn('WebGL unavailable', e);
     el.classList.add('no-gl');
     return;
@@ -59,6 +63,7 @@ export function runMotion(shot: Shot, params: URLSearchParams, typeHtml: string,
     aspect = r.width / r.height;
     stage.resize(r.width, r.height);
     lastP = -1;
+    if (diag.enabled) for (const [k, t] of Object.entries(stage.targets)) diag.target(k, stage.renderer, t);
   };
   let lastP = -1;
   size();
@@ -98,7 +103,16 @@ export function runMotion(shot: Shot, params: URLSearchParams, typeHtml: string,
       el.style.setProperty('--p', String(moving ? 0 : stage.progress));
       el.classList.toggle('converged', !moving && stage.done);
     }
-    if (!moving && stage.done) body.dataset.done = '1';
+    if (!moving && stage.done) {
+      if (diag.enabled && body.dataset.done !== '1') {
+        const g = document.createElement('canvas'); g.width = g.height = 32;
+        const x = g.getContext('2d')!; x.drawImage(canvas, 0, 0, 32, 32);
+        const d = x.getImageData(0, 0, 32, 32).data; let m = 0;
+        for (let i = 0; i < d.length; i += 4) m += (d[i] + d[i + 1] + d[i + 2]) / 3;
+        diag.log(`converged at p=${lastP.toFixed(3)}  frame mean luminance ${(m / (d.length / 4)).toFixed(1)} (≈0 = black)`);
+      }
+      body.dataset.done = '1';
+    }
     requestAnimationFrame(tick);
   }
   requestAnimationFrame(tick);

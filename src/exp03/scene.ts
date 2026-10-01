@@ -446,12 +446,18 @@ export class Stage {
     this.camera.aspect = w / h;
     this.camera.updateProjectionMatrix();
     for (const rt of [this.rtS, this.rtA, this.rtB]) rt?.dispose();
-    const mk = (type: THREE.TextureDataType) => new THREE.WebGLRenderTarget(this.w, this.h, { type, depthBuffer: true, colorSpace: THREE.LinearSRGBColorSpace });
+    // accumulation targets are only ever sampled 1:1 at texel centres (full-screen quads), so NEAREST is pixel-identical to
+    // LINEAR here, and it removes the need for OES_texture_float_linear, which most phone GPUs lack: without it a linearly
+    // filtered float32 target is incomplete and samples as black (the real-device failure: UI visible, scene black)
+    const mk = (type: THREE.TextureDataType) => new THREE.WebGLRenderTarget(this.w, this.h, { type, depthBuffer: true, colorSpace: THREE.LinearSRGBColorSpace, minFilter: THREE.NearestFilter, magFilter: THREE.NearestFilter, generateMipmaps: false });
     // accumulate in float32 where the GPU can render to it; otherwise (common on phones) half float, which still converges
     const acc = this.renderer.extensions.has('EXT_color_buffer_float') ? THREE.FloatType : THREE.HalfFloatType;
     this.rtS = mk(THREE.HalfFloatType); this.rtA = mk(acc); this.rtB = mk(acc);
     this.restart();
   }
+
+  /** accumulation targets (read-only; for the ?diag device report) */
+  get targets() { return { rtS: this.rtS, rtA: this.rtA, rtB: this.rtB }; }
 
   restart(): void { this.n = 0; this.seq = 0; this.done = false; }
   /** while moving: keep a short history (weight of a new pass ≥ 1/3) and keep advancing the sample sequence */
