@@ -20,15 +20,3 @@ export class SmoothDamp {
     return this.value;
   }
 }
-
-export function readScrollProgress(): number {
-  const max = document.documentElement.scrollHeight - window.innerHeight;
-  return max > 0 ? Math.min(1, Math.max(0, window.scrollY / max)) : 0;
-}
-
-export const clamp01 = (x: number) => Math.min(1, Math.max(0, x));
-export const smoothstep = (a: number, b: number, x: number) => {
-  const t = clamp01((x - a) / (b - a));
-  return t * t * (3 - 2 * t);
-};
-export const easeOutCubic = (t: number) => 1 - Math.pow(1 - t, 3);

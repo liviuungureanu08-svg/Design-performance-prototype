@@ -1,154 +1,102 @@
-import '@fontsource/instrument-serif/400.css';
+import * as THREE from 'three';
 import '@fontsource/instrument-serif/400-italic.css';
 import '@fontsource-variable/inter';
 import './style.css';
-
-import { Engine } from './gl/engine';
-import { Director } from './gl/director';
-import { SmoothDamp, clamp01, readScrollProgress, smoothstep } from './scroll';
-import { beatAt } from './timeline';
-import { Copy } from './typography';
+import { Engine } from './flagship/engine';
+import { SmoothDamp } from './scroll';
+import { smooth } from './flagship/curve';
 
 const params = new URLSearchParams(location.search);
 const debug = params.has('debug') || params.has('u');
-const $ = <T extends HTMLElement>(id: string) => document.getElementById(id) as T;
 const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const $ = <T extends HTMLElement>(id: string) => document.getElementById(id) as T;
 
-const copies = [new Copy($('copy-0')), new Copy($('copy-1')), new Copy($('copy-2')), new Copy($('copy-3'))];
-const chapter = $('chapter');
-const hint = $('hint');
-const meter = $('meter');
-const NAMES = ['I · Before', 'II · Within', 'III · Held', 'IV · Now'];
-
-/* --- renderer, with a graceful static fallback ------------------------- */
 let eng: Engine | null = null;
-let director: Director | null = null;
 if (params.get('fallback') !== '1') {
   try {
     eng = new Engine($<HTMLCanvasElement>('gl'));
+    eng.setRaw(params.has('raw'));
+    if (params.has('cam')) eng.camOverride = params.get('cam')!.split(',').map(Number);
     eng.resize(window.innerWidth, window.innerHeight);
-    eng.validate();
-    director = new Director(eng);
-    eng.raw = params.has('raw');
-    if (params.has('scene')) director.debug = { scene: Number(params.get('scene')), z: Number(params.get('z') ?? 0) };
     $<HTMLCanvasElement>('gl').addEventListener('webglcontextlost', (e) => {
       e.preventDefault();
       eng = null;
-      director = null;
       document.body.classList.add('no-gl');
     });
   } catch (err) {
-    console.warn('WebGL unavailable, using the static poster.', err);
+    console.warn('WebGL2 unavailable, using the static poster.', err);
     eng?.dispose();
     eng = null;
-    director = null;
   }
 }
 if (!eng) document.body.classList.add('no-gl');
 
-function resize(): void {
-  eng?.resize(window.innerWidth, window.innerHeight);
-}
-// debounced: mobile browsers fire many resize events while the URL bar slides
 let resizeTimer = 0;
 window.addEventListener('resize', () => {
   window.clearTimeout(resizeTimer);
-  resizeTimer = window.setTimeout(resize, 120);
+  resizeTimer = window.setTimeout(() => eng?.resize(window.innerWidth, window.innerHeight), 120);
 });
-resize();
 
-/* --- input -------------------------------------------------------------- */
-const smooth = new SmoothDamp(readScrollProgress(), 0.5);
+const readProgress = () => {
+  const max = document.documentElement.scrollHeight - window.innerHeight;
+  return max > 0 ? Math.min(1, Math.max(0, window.scrollY / max)) : 0;
+};
+// scroll = intent; each mass answers with its own inertia (heavy slab lags, light slab and glass are quick)
+const sU = new SmoothDamp(readProgress(), 0.42);
+const sL = new SmoothDamp(readProgress(), 0.85);
+const sR = new SmoothDamp(readProgress(), 0.5);
+const sC = new SmoothDamp(readProgress(), 0.65);
+const sF = new SmoothDamp(readProgress(), 0.38);
 let override: number | null = params.has('u') ? Number(params.get('u')) : null;
-const pointer = { x: 0, y: 0, sx: 0, sy: 0 };
-window.addEventListener('pointermove', (e) => {
-  pointer.x = (e.clientX / window.innerWidth - 0.5) * 2;
-  pointer.y = (e.clientY / window.innerHeight - 0.5) * 2;
-});
-window.addEventListener('pageshow', () => smooth.snap(readScrollProgress()));
+window.addEventListener('pageshow', () => [sU, sL, sR, sC, sF].forEach((s) => s.snap(readProgress())));
 
 if (debug) {
   (window as unknown as Record<string, unknown>).__lab = {
     set(u: number | null) {
       override = u;
-      if (u !== null) smooth.snap(u);
+      if (u !== null) [sU, sL, sR, sC, sF].forEach((s) => s.snap(u));
     },
+    world: eng?.world,
     info: () => ({ scale: eng?.renderScale ?? 0, memory: eng ? { ...eng.renderer.info.memory } : null, fallback: !eng }),
   };
 }
 
-/* --- adaptive resolution: keep the frame rate honest on weak GPUs -------- */
-let slow = 0;
-let fast = 0;
+let slow = 0, fast = 0;
 function adapt(dt: number): void {
   if (!eng || params.has('noadapt')) return;
-  if (dt > 1 / 24) slow += dt;
-  else slow = Math.max(0, slow - dt * 0.5);
-  if (dt < 1 / 52) fast += dt;
-  else fast = Math.max(0, fast - dt * 2);
-  if (slow > 1.4 && eng.renderScale > 0.5) {
-    eng.setScale(Math.max(0.5, eng.renderScale - 0.1));
-    slow = 0;
-  } else if (fast > 6 && eng.renderScale < 0.85) {
-    eng.setScale(Math.min(0.85, eng.renderScale + 0.05));
-    fast = 0;
-  }
+  if (dt > 1 / 24) slow += dt; else slow = Math.max(0, slow - dt * 0.5);
+  if (dt < 1 / 52) fast += dt; else fast = Math.max(0, fast - dt * 2);
+  if (slow > 1.4 && eng.renderScale > 0.5) { eng.setScale(Math.max(0.5, eng.renderScale - 0.1)); slow = 0; }
+  else if (fast > 6 && eng.renderScale < 1) { eng.setScale(Math.min(1, eng.renderScale + 0.05)); fast = 0; }
 }
 
-/* --- frame loop --------------------------------------------------------- */
 const t0 = performance.now();
 let last = t0;
-let started = false;
+const drift = new THREE.Vector3();
+const end = $('end');
+const hint = $('hint');
 
 function frame(now: number): void {
   const dt = Math.min(0.05, Math.max(0.001, (now - last) / 1000));
   last = now;
-  const time = (now - t0) / 1000;
-  const target = override ?? readScrollProgress();
-  const u = override ?? smooth.step(target, dt);
-  pointer.sx += (pointer.x - pointer.sx) * Math.min(1, dt * 3);
-  pointer.sy += (pointer.y - pointer.sy) * Math.min(1, dt * 3);
-  const beat = beatAt(u);
-
-  if (eng && director) {
-    const k = reduceMotion ? 0.25 : 1;
-    // the eye stills during the big events so the transformation, not the camera, is the subject
-    const calm = 1 - 0.7 * (beat.tr >= 0 ? Math.sin(Math.PI * clamp01(beat.s)) : 0);
-    const look = params.has('cx')
-      ? { camX: Number(params.get('cx')), camY: Number(params.get('cy') ?? 0), time }
-      : { camX: (pointer.sx * 0.5 + Math.sin(time * 0.21) * 0.08) * k * calm, camY: (-pointer.sy * 0.3 + Math.cos(time * 0.17) * 0.05) * k * calm, time };
-    // the film opens out of black: exposure ramps up while the sun is already waiting
-    eng.u.uFadeIn.value = params.has('u') || params.has('scene') ? 1 : Math.pow(clamp01(time / 1.8), 1.6);
-    director.render(beat, look);
+  const target = override ?? readProgress();
+  let u: number, uL: number, uR: number, uC: number, uF: number;
+  if (override !== null) u = uL = uR = uC = uF = override;
+  else {
+    u = sU.step(target, dt); uL = sL.step(target, dt); uR = sR.step(target, dt); uC = sC.step(target, dt); uF = sF.step(target, dt);
+  }
+  if (eng) {
+    // the camera is nearly still while the object is being understood; a hair of life only during the stills
+    const k = reduceMotion || params.has('u') ? 0 : 1;
+    const calm = 1 - smooth(0.2, 0.5, u) * 0.8 - smooth(0.88, 0.97, u) * 0.2;
+    const tt = (now - t0) / 1000;
+    drift.set(Math.sin(tt * 0.23) * 0.05, Math.cos(tt * 0.19) * 0.03, 0).multiplyScalar(k * Math.max(0, calm) * (1 - smooth(0.5, 0.7, u)));
+    eng.render(u, { L: uL, R: uR, C: uC, F: uF }, tt, drift);
     adapt(dt);
   }
-
-  // typography: in on arrival, out as the next event begins; silence in between
-  const intro = clamp01((now - t0 - 600) / 1700);
-  copies[0].update(intro, smoothstep(0.07, 0.115, u));
-  copies[1].update(smoothstep(0.275, 0.32, u), smoothstep(0.375, 0.415, u));
-  copies[2].update(smoothstep(0.62, 0.665, u), smoothstep(0.705, 0.745, u));
-  copies[3].update(smoothstep(0.935, 0.975, u), 0);
-
-  const idx = beat.tr < 0 ? beat.scene : beat.p > 0.5 ? beat.scene + 1 : beat.scene;
-  if (chapter.dataset.i !== String(idx)) {
-    chapter.dataset.i = String(idx);
-    chapter.textContent = NAMES[idx];
-  }
-  hint.style.opacity = u > 0.012 ? '0' : '1';
-  meter.style.transform = `scaleX(${u.toFixed(4)})`;
-
-  if (!started) {
-    started = true;
-    document.body.classList.add('ready');
-  }
+  end.classList.toggle('on', u > 0.945);
+  hint.style.opacity = u > 0.01 ? '0' : '1';
   requestAnimationFrame(frame);
 }
-
-function start(): void {
-  requestAnimationFrame(frame);
-}
-if (eng) eng.initText('NOW', 0.46, 1).then(start, start);
-else start();
-
+requestAnimationFrame(frame);
 window.addEventListener('pagehide', () => eng?.dispose());
