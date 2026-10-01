@@ -33,7 +33,7 @@ export function choreo(p: number, P: Params): Choreo {
   const uM = u0 + (P.end + LM - u0) * m;
   return {
     split: ss(0.14, 0.33, p),
-    uE: uM + 1.05 * ss(0.3, 0.44, p),
+    uE: uM + 1.05 * ss(0.27, 0.41, p),
     uM,
     emit: 1 - ss(0.73, 0.91, p),
     sun: ss(0.72, 0.93, p),
@@ -82,7 +82,7 @@ export function growify(m: THREE.Material, U: BuildUniforms): void {
     s.vertexShader = s.vertexShader.replace('#include <common>', '#include <common>\n' + GROW_COMMON)
       .replace('#include <begin_vertex>', '#include <begin_vertex>\ngrow(transformed);');
     s.fragmentShader = s.fragmentShader.replace('#include <common>', '#include <common>\nvarying float vEm; uniform float uEmit; uniform vec3 uPoss;')
-      .replace('#include <emissivemap_fragment>', '#include <emissivemap_fragment>\ntotalEmissiveRadiance += uPoss * (vEm * uEmit * 1.3);');
+      .replace('#include <emissivemap_fragment>', '#include <emissivemap_fragment>\ntotalEmissiveRadiance += uPoss * (vEm * uEmit * 0.9);');
   };
   m.customProgramCacheKey = () => 'exp03-grow-' + m.type;
 }

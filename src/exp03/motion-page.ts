@@ -74,7 +74,10 @@ export function runMotion(shot: Shot, params: URLSearchParams, typeHtml: string,
   function tick(now: number): void {
     const dt = Math.min(0.05, Math.max(0.001, (now - last) / 1000));
     last = now;
-    const p = fixed ?? smooth.step(progress(), dt);
+    const target = fixed ?? progress();
+    let p = fixed ?? smooth.step(target, dt);
+    // land exactly on the target at rest, so a given scroll position always yields exactly the same image
+    if (fixed === null && Math.abs(p - target) < 2e-4 && Math.abs(smooth.velocity) < 2e-3) { smooth.snap(target); p = target; }
     if (lastP < 0 || Math.abs(p - lastP) > 2e-5) {
       stage.setProgress(p);
       stage.aim(camAt(p, aspect));
