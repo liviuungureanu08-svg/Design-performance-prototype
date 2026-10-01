@@ -35,7 +35,7 @@ export function choreo(p: number, P: Params): Choreo {
   return {
     split: ss(0.14, 0.33, p),
     // the boundary reaches ahead during the paradox, then tightens to the matter once matter moves (never a full outline)
-    uE: uM + 1.55 * ss(0.26, 0.42, p) - 0.5 * ss(0.42, 0.56, p),
+    uE: uM + 1.9 * ss(0.26, 0.42, p) - 0.85 * ss(0.42, 0.56, p),
     uM,
     emit: 1 - ss(0.73, 0.91, p),
     sun: ss(0.68, 0.88, p),
