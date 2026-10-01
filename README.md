@@ -94,6 +94,29 @@ Float32 accumulation falls back to half float where the GPU can't render to floa
 (static endpoints, unchanged). Freeze frames: `node scripts/shot03.mjs "view=motion&t=0.5&spp=64" out.png 1600x900`.
 Robustness: `node scripts/robust03.mjs`. Representative frames: `artifact/exp03/motion/`.
 
+**Verification (software GL / SwiftShader, headless Chromium).** `npm run build` (tsc + vite) PASS. Freeze frames at
+0/10/20/30/37/45/50/53/56/63/75/90/100 % (64 passes, 1600×900) plus a 24-pass sweep 41–86 %: console clean.
+`scripts/robust03.mjs` PASS: loads at 0, slow / fast wheel forward, reverse, rapid direction changes, pause converges,
+same progress via two different scroll paths → identical image hash, reload keeps position, resize + 390×844 portrait
+re-converge. Static views `?view=a|b` re-rendered unchanged. Flagship 01 / Experiment 02 sources untouched.
+
+**Worst frames found and changed:** 75 % was a dark trough (A's lights left before daylight arrived) → daylight now rises
+first. ~60–72 % a late specular hotspot from the forming-matter glow → halved and ended earlier. 50 % the travelling
+boundary hooked where it crosses from spine to edge (wrong ribbon tangent) → true tangent + longer, gentler crossing.
+0 % ungrown plates rendered as slivers in the slit, dimming/dotting the spine light → ungrown matter is fully degenerate.
+37 % paradox was invisible (boundaries occluded near the ribs) → boundary leads further during 26–42 %.
+
+**Worst remaining region (honest): ~44–48 %.** The light boundaries trace seg 3's outline just before matter reaches it;
+for a moment it can read as a drawn outline (close to the wireframe-reveal cliché). Also a faint curl where a boundary leaves
+the spine near the last fold (≈50–53 %). Other known weaknesses: fresh-matter emission reads slightly white/flat at its
+brightest (≈50 %); the 60–72 % "understanding" frames are dark (A's lighting, intentionally calm) and may feel like a lull;
+the moving image is lighter (2 passes/frame with short history) and only the stopped image is fully converged; nothing was
+measured on a real GPU or phone; the half-float phone fallback is untested on a device; the earlier private artifact
+(static page) showed no 3D on the reviewer's phone and has not been re-published — use the local route or the frames in
+`artifact/exp03/motion/` (`contact-sheet.jpg`, `p000…p100.jpg`, `phone-*.jpg`).
+
+**HUMAN MOTION REVIEW REQUIRED. Human WOW not claimed.**
+
 ## Experiment 02 — The Vale of Orrin
 **Concept: map → territory.** Scene A is a printed survey sheet (contour map with hypsometric tints, engraved
 relief shading, water lining, title block). Scene B is the same sheet as a paper relief model under low sun: the
