@@ -447,7 +447,9 @@ export class Stage {
     this.camera.updateProjectionMatrix();
     for (const rt of [this.rtS, this.rtA, this.rtB]) rt?.dispose();
     const mk = (type: THREE.TextureDataType) => new THREE.WebGLRenderTarget(this.w, this.h, { type, depthBuffer: true, colorSpace: THREE.LinearSRGBColorSpace });
-    this.rtS = mk(THREE.HalfFloatType); this.rtA = mk(THREE.FloatType); this.rtB = mk(THREE.FloatType);
+    // accumulate in float32 where the GPU can render to it; otherwise (common on phones) half float, which still converges
+    const acc = this.renderer.extensions.has('EXT_color_buffer_float') ? THREE.FloatType : THREE.HalfFloatType;
+    this.rtS = mk(THREE.HalfFloatType); this.rtA = mk(acc); this.rtB = mk(acc);
     this.restart();
   }
 
