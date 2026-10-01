@@ -30,3 +30,11 @@ body[data-view='ab'] .thesis { font-size: clamp(16px, 2.6vmin, 34px); }
 /* convergence hairline while an image is still resolving (not animation: it disappears when the still is done) */
 .cell::after { content: ''; position: absolute; left: 0; top: 0; height: 1px; width: calc(var(--p, 0) * 100%); background: rgba(233, 230, 224, 0.35); }
 .cell.converged::after { display: none; }
+/* Motion Proof: the stage is fixed, the page scrolls behind it (deterministic progress = scroll position) */
+body[data-view='motion'] { overflow-y: auto; }
+html:has(body[data-view='motion']), body[data-view='motion'] { height: auto; }
+#runway { height: 760vh; }
+body.frozen #runway { height: 0; }
+.hint { position: absolute; right: clamp(16px, 5vmin, 72px); bottom: clamp(26px, 6.5vmin, 88px); font-size: 11px; letter-spacing: 0.24em;
+  text-transform: uppercase; color: var(--ink-dim); transition: opacity 0.6s ease; pointer-events: none; }
+@media (max-width: 600px) { .hint { bottom: 64px; } }

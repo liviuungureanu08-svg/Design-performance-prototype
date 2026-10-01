@@ -6,6 +6,7 @@ import * as THREE from 'three';
 import { Folder, plateGeometry } from './fold';
 import { spineLight, impliedPlane, POSSIBILITY } from './ether';
 import { makeFolder, P, type Params } from './design';
+import { choreo, buildUniforms, growify, growDepth, growPlate, lightLine, hazePlane, LM, type BuildUniforms } from './motion';
 
 export type SceneId = 'a' | 'b';
 
@@ -51,6 +52,21 @@ const LOOKS: Record<SceneId, Look> = {
     sun: { dir: V(-0.8, 0.38, 0.6).normalize(), color: 0xffdcb6, intensity: 6.5, spread: 0.012 },
   },
 };
+
+const lerpHex = (a: number, b: number, t: number) => new THREE.Color(a).lerp(new THREE.Color(b), t).getHex();
+const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
+/** the look at handoff h: every light of A and of B exists; A's dim as B's rise (light by light, never image by image) */
+function blendLook(h: number, sun: number, emit: number): Look {
+  const A = LOOKS.a, B = LOOKS.b;
+  return {
+    exposure: 1,
+    spots: [...A.spots.map((s) => ({ ...s, intensity: s.intensity * (1 - h) * (0.35 + 0.65 * emit) })), ...B.spots.map((s) => ({ ...s, intensity: s.intensity * h }))],
+    sky: { up: lerp(A.sky.up, B.sky.up, h), down: lerp(A.sky.down, B.sky.down, h), tint: lerpHex(A.sky.tint, B.sky.tint, h), bounce: lerpHex(A.sky.bounce, B.sky.bounce, h) },
+    env: lerp(A.env, B.env, h), fog: lerp(A.fog, B.fog, h), fogColor: lerpHex(A.fogColor, B.fogColor, h),
+    wall: lerpHex(A.wall, B.wall, h), floor: lerpHex(A.floor, B.floor, h),
+    sun: { ...B.sun!, intensity: B.sun!.intensity * sun },
+  };
+}
 
 /** light cookie: a tall opening with slightly soft jambs (daylight through a window, not a stage spot) */
 function windowCookie(): THREE.Texture {
@@ -106,6 +122,9 @@ export class Stage {
   params: Params;
   private emitters: THREE.PointLight[] = [];
   private spots: THREE.SpotLight[] = [0, 1, 2].map(() => new THREE.SpotLight());
+  private glowLights: THREE.PointLight[] = [];
+  build: BuildUniforms = buildUniforms();
+  private motion = false; private envKey = -1; private seq = 0;
   private skyL = new THREE.DirectionalLight();
   private sun = new THREE.SpotLight();
   private rtS!: THREE.WebGLRenderTarget; private rtA!: THREE.WebGLRenderTarget; private rtB!: THREE.WebGLRenderTarget;
@@ -307,15 +326,19 @@ export class Stage {
   setScene(id: SceneId): void {
     this.id = id;
     this.look = LOOKS[id];
-    const L = this.look;
     this.buildObject(id);
+    this.applyLook(this.look, true);
+    this.restart();
+  }
+
+  private applyLook(L: Look, captureEnv: boolean): void {
     L.spots.forEach((sp, i) => {
       const k = this.spots[i];
       k.position.copy(sp.pos); k.target.position.copy(sp.target);
-      k.color.set(sp.color); k.intensity = sp.intensity; k.angle = sp.angle; k.castShadow = sp.shadow;
+      k.color.set(sp.color); k.intensity = sp.intensity; k.angle = sp.angle; k.castShadow = sp.shadow && (!this.motion || sp.intensity > 0);
     });
     this.wallMat.color.set(L.wall); this.floorMat.color.set(L.floor);
-    this.sun.visible = !!L.sun;
+    this.sun.visible = !!L.sun && (!this.motion || L.sun.intensity > 0);
     if (L.sun) { this.sun.color.set(L.sun.color); this.sun.intensity = L.sun.intensity; }
     this.scene.fog = new THREE.FogExp2(L.fogColor, L.fog);
     this.scene.background = new THREE.Color(L.fogColor);
@@ -327,17 +350,92 @@ export class Stage {
       this.scene.background = new THREE.Color(0xe8e5df);
       this.scene.environment = null;
     } else {
-      this.scene.environment = this.sceneEnv() ?? this.env;
+      if (captureEnv) this.scene.environment = this.sceneEnv() ?? this.env;
       this.scene.environmentIntensity = L.env;
     }
-    this.restart();
+  }
+
+  /* ---------------------------------------------------------------- */
+  /* Motion Proof: one object whose state is a pure function of p      */
+  /* ---------------------------------------------------------------- */
+  initMotion(): void {
+    this.motion = true;
+    this.objectGroup.clear();
+    this.emitters.forEach((l) => this.scene.remove(l));
+    this.emitters = [];
+    // B's spots join A's (six lights; each fades or rises, none moves)
+    for (let i = 0; i < 3; i++) {
+      const k = new THREE.SpotLight();
+      this.scene.add(k, k.target);
+      k.shadow.mapSize.set(2048, 2048); k.shadow.bias = -0.0002; k.shadow.normalBias = 0.01;
+      k.shadow.camera.near = 2; k.shadow.camera.far = 24; k.penumbra = 1; k.decay = 2;
+      this.spots.push(k);
+    }
+    const f = this.folder, d = f.d, p = this.params, U = this.build;
+    const rib = d.gap / 2 + 0.018, uRib = p.f3 - 0.12;
+    // A's plate widths (the made part, receding toward the spine) are the floor the build grows from
+    const taper = (W: (u: number) => number, len: number) => (u: number) => u > uRib ? 0 : u <= p.f2 ? W(u) : Math.max(rib, W(p.f2) + (rib - W(p.f2)) * Math.min(1, (u - p.f2) / len));
+    const mat = noIrradiance(new THREE.MeshPhysicalMaterial({ color: 0x141518, roughness: 0.38, metalness: 0, specularIntensity: 0.8, side: THREE.FrontSide, shadowSide: THREE.FrontSide })) as THREE.MeshPhysicalMaterial;
+    mineral(mat);
+    growify(mat, U);
+    const depth = growDepth(U);
+    for (const [side, WB, WA] of [[-1, d.wL, taper(d.wL, 0.75)], [1, d.wR, taper(d.wR, 1.05)]] as const) {
+      const o = new THREE.Mesh(growPlate(f, side, WB, WA), mat);
+      o.castShadow = true; o.receiveShadow = true; o.customDepthMaterial = depth;
+      this.objectGroup.add(o);
+    }
+    const ether = new THREE.Group();
+    const zero = () => 0, g2 = d.gap / 2;
+    // the spine's light: two lips that coincide in A (exactly A's single line) and part to the slit's width
+    for (const s of [-1, 1]) ether.add(lightLine(f, p.f3 - 0.5, d.length, [p.f3 - 0.5, p.f3 + 0.05, p.f3 + 0.5, d.length - 0.12], 0.06, 0.375, zero, () => s * g2, 0, U, 1.3));
+    // A's construction hairlines at the future outer edges (seg 3), unchanged until matter reaches them
+    const edgeOf = (W: (u: number) => number, sg: number) => (u: number, a: number) => { let v = sg * W(u); for (let i = 0; i < 6; i++) v = sg * W(u + v * Math.tan(a)); return v; };
+    ether.add(lightLine(f, p.f2 + 0.02, p.f3, [p.f2 + 0.02, p.f2 + 0.12, p.f2 + 0.22, p.f2 + 0.85], 0.035, 0.3, edgeOf(d.wL, -1), edgeOf(d.wL, -1), 1, U, 1.0));
+    ether.add(lightLine(f, p.f2 + 0.02, p.f3, [p.f2 + 0.02, p.f2 + 0.12, p.f2 + 0.3, p.f2 + 1.05], 0.035, 0.3, edgeOf(d.wR, 1), edgeOf(d.wR, 1), 1, U, 1.0));
+    // light boundaries that leave the spine and travel to where the outer edges will be (they continue A's hairlines)
+    ether.add(lightLine(f, p.f2 + 0.2, d.length, [p.f2 + 0.2, p.f2 + 0.85, d.length - 0.05, d.length + 0.01], 0.035, 0.3, () => -g2, edgeOf(d.wL, -1), 2, U, 1.0));
+    ether.add(lightLine(f, p.f2 + 0.2, d.length, [p.f2 + 0.3, p.f2 + 1.05, d.length - 0.05, d.length + 0.01], 0.035, 0.3, () => g2, edgeOf(d.wR, 1), 2, U, 1.0));
+    ether.add(hazePlane(f, p.f2 + 0.1, d.length, [p.f2 + 0.2, p.f2 + 0.9, p.f3 + 0.35, d.length - 0.15], 0.07, U));
+    this.objectGroup.add(ether);
+    // A's emitters (the luminous spine lights the ribs and floor) and two that ride the forming matter
+    const us = [p.f3 - 0.35, p.f3 - 0.03, p.f3 + 0.3, p.f3 + 0.62, p.f3 + 0.95];
+    for (const u of us) { const l = new THREE.PointLight(POSSIBILITY, 0, 0, 2); l.position.copy(f.F(u, 0, 0)); this.emitters.push(l); this.scene.add(l); }
+    for (let i = 0; i < 2; i++) { const l = new THREE.PointLight(POSSIBILITY, 0, 0, 2); this.glowLights.push(l); this.scene.add(l); }
+    this.id = 'a';
+    this.envKey = -1;
+    this.setProgress(0);
+  }
+
+  /** the whole visual state at progress p (deterministic: no history) */
+  setProgress(pr: number): void {
+    const c = choreo(pr, this.params), U = this.build, f = this.folder, d = f.d;
+    U.uM.value = c.uM; U.uE.value = c.uE; U.uSplit.value = c.split; U.uEmit.value = c.emit;
+    const ks = [0.04, 0.26, 0.26, 0.17, 0.08];
+    this.emitters.forEach((l, i) => (l.intensity = ks[i] * c.emit));
+    // the forming matter gives off light where it is newest (just behind the matter frontier)
+    this.glowLights.forEach((l, i) => {
+      const u = Math.min(d.length - 0.1, Math.max(this.params.f2, c.uM - LM * (0.3 + 0.35 * i)));
+      l.position.copy(f.F(u, 0, 0.08));
+      l.intensity = 0.16 * c.glow * c.emit;
+    });
+    const look = blendLook(c.hand, c.sun, c.emit);
+    this.look = look;
+    const key = Math.round(c.hand * 24);
+    this.applyLook(look, key !== this.envKey);
+    this.envKey = key;
   }
 
   frame(cam: { pos: THREE.Vector3; target: THREE.Vector3; fov: number; shiftY?: number }): void {
+    this.aim(cam);
+    this.restart();
+  }
+
+  /** place the camera without discarding the accumulated image (motion) */
+  aim(cam: { pos: THREE.Vector3; target: THREE.Vector3; fov: number }): void {
     this.camera.position.copy(cam.pos);
     this.camera.fov = cam.fov;
+    this.camera.updateProjectionMatrix();
     this.camera.lookAt(cam.target);
-    this.restart();
   }
 
   resize(w: number, h: number): void {
@@ -353,7 +451,9 @@ export class Stage {
     this.restart();
   }
 
-  restart(): void { this.n = 0; this.done = false; }
+  restart(): void { this.n = 0; this.seq = 0; this.done = false; }
+  /** while moving: keep a short history (weight of a new pass ≥ 1/3) and keep advancing the sample sequence */
+  soften(): void { this.n = Math.min(this.n, 2); this.done = false; }
 
   private placeLights(i: number): void {
     const L = this.look;
@@ -389,7 +489,7 @@ export class Stage {
     if (this.done || !this.rtS) return true;
     const r = this.renderer;
     for (let c = 0; c < count && this.n < this.spp; c++) {
-      const i = this.n;
+      const i = this.seq++ % this.spp;
       // stratified sequences (R2 / golden-angle) so few passes already look smooth
       const g1 = 0.7548776662, g2 = 0.5698402910;
       const ja = (0.5 + g1 * (i + 1)) % 1, jb = (0.5 + g2 * (i + 1)) % 1;
@@ -401,7 +501,7 @@ export class Stage {
       // accumulate (ping-pong, exact running mean)
       this.accumMat.uniforms.prev.value = this.rtA.texture;
       this.accumMat.uniforms.cur.value = this.rtS.texture;
-      this.accumMat.uniforms.k.value = 1 / (i + 1);
+      this.accumMat.uniforms.k.value = 1 / (this.n + 1);
       this.quad.material = this.accumMat;
       r.setRenderTarget(this.rtB);
       r.render(this.qs, this.qc);
