@@ -5,6 +5,14 @@
 | Flagship 01 — Monolith / Inner Architecture | `index.html` (`src/main.ts`, `src/flagship/`) | **CLOSED as R&D.** Technical PASS · spatial transition PASS · premium art direction PARTIAL · human wow NOT ACHIEVED · productization NOT YET. Reusable idea: spatial entry / scale reinterpretation (exterior object → entry → scale change → navigable interior); possible future use = spatial portfolio navigation (future context only, not implemented). Final state: commit `63ab9be`, local tag `flagship01-final` (tag push refused by the remote). |
 | Experiment 02 — The Vale of Orrin (semantic material transformation) | `exp02.html` (`src/exp02/`) | Gates A–C self-assessed PASS, D partial, E done in software GL. **Awaiting human review. Not approved, not reusable/productizable until a human says so.** |
 
+## Technical Visual Intelligence Library
+`docs/alfa-visual-tech/` is the curated technical toolbox: *how* to build a visual idea (materials, lighting, optics, geometry,
+transitions, post, performance tiers, interaction, reference rendering). It is not art direction. Sources are traceable (three.js,
+drei, R3F, LYGIA, three-mesh-bvh, three-gpu-pathtracer, canvas-sketch, Book of Shaders, plus pmndrs/postprocessing, glTF-Transform, and the
+Khronos glTF sample assets), labelled `[EXTERNAL]` / `[ALFA-PROVEN]`, with licenses. LYGIA and the Book of Shaders are not usable as code in commercial work.
+Future agents: read `docs/alfa-visual-tech/README.md` (router), then `SELECTION_MATRIX.md`, then only the 1–2 files it names. Don't read the whole library.
+No dependencies were added for it.
+
 ## Experiment 02 — The Vale of Orrin
 **Concept: map → territory.** Scene A is a printed survey sheet (contour map with hypsometric tints, engraved
 relief shading, water lining, title block). Scene B is the same sheet as a paper relief model under low sun: the
