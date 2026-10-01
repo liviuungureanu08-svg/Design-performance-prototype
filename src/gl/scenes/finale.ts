@@ -13,6 +13,8 @@ uniform vec3 uSun;
 uniform sampler2D tSdf;
 uniform vec4 uRect;
 uniform float uCrack;
+uniform float uWorld;
+uniform float uAppear;   // 0: the word is only light  ..  1: carved obsidian
 
 const float FLOOR_Y = -.175;
 
@@ -54,7 +56,7 @@ vec3 above(vec2 p, vec2 light, float R) {
     occ *= smoothstep(-.004, .012, sdfAt(sp));
   }
   float rr = length(dir);
-  col += vec3(1., .6, .3) * rays * occ * exp(-rr * 1.5) * .45 * smoothstep(R * 1.0, R * 1.9, rr);
+  col += vec3(1., .6, .3) * rays * occ * exp(-rr * 2.1) * .30 * smoothstep(R * 1.0, R * 1.9, rr);
 
   // ---------- the drop of light in the O ----------
   float dd = length(p - light);
@@ -62,25 +64,28 @@ vec3 above(vec2 p, vec2 light, float R) {
 
   // ---------- the letters: layered extrusion ----------
   const int N = 12;
-  const float T = .085;
+  float T = .085 * uAppear;
   bool hit = false;
   vec3 wall = vec3(0.);
+  vec3 glowFace = vec3(1., .60, .30) * (1.5 + 1.6 * exp(-length(p - light) * 2.0));
   for (int k = N - 1; k >= 0; k--) {
     float z = T * float(k) / float(N - 1);
     vec2 pk = p + cam * z * 1.4;
-    if (sdfAt(pk) < 0.) {
+    float cov = smoothstep(.0011, -.0011, sdfAt(pk));
+    if (cov > 0.) {
       float f = float(k) / float(N - 1);               // 0 front .. 1 back
       float lit = exp(-length(pk - light) * 1.9);
       wall = mix(vec3(.010, .008, .012), vec3(1., .5, .2) * 1.15, lit * (1. - f * .72));
       // thin bright seams where layers stack, so the thickness reads as machined stone
       wall *= .86 + .14 * sin(float(k) * 2.2);
-      col = wall;
+      col = mix(col, mix(glowFace, wall, uAppear), cov);
       hit = true;
     }
   }
   float sd = sdfAt(p);
-  if (sd < 0.) {
-    float inD = -sd;
+  float covF = smoothstep(.0011, -.0011, sd);
+  if (covF > 0.) {
+    float inD = max(-sd, 0.);
     float e = .0035;
     vec2 grad = vec2(sdfAt(p + vec2(e, 0.)) - sdfAt(p - vec2(e, 0.)), sdfAt(p + vec2(0., e)) - sdfAt(p - vec2(0., e))) / (2. * e);
     float bev = 1. - smoothstep(0., .011, inD);
@@ -95,13 +100,14 @@ vec3 above(vec2 p, vec2 light, float R) {
     vec3 bevCol = vec3(1., .66, .34) * pw(facing, 3.) * 1.9 + vec3(.55, .62, .8) * .12;
     face = mix(face, bevCol, bev * (.04 + .96 * pw(facing, 4.)));
     face += vec3(1., .85, .65) * (1. - smoothstep(0., .0032, inD)) * (.05 + 1.0 * pw(facing, 4.));
-    col = face;
+    col = mix(col, mix(glowFace, face, uAppear), covF);
   }
   return col;
 }
 
 void main() {
   vec2 p = pcoord(vUv);
+  p = uSun.xy + (p - uSun.xy) / uWorld;   // portrait: the whole word scales about the light so the O stays on the circle
   vec2 cam = uCam.xy;
   vec2 pp = p - cam * .01;
   vec2 light = uSun.xy - cam * .006;   // the drop sits a little behind the slab

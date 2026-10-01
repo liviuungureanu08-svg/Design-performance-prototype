@@ -7,12 +7,7 @@ void main() {
   gl_Position = vec4(position.xy, 0.0, 1.0);
 }`;
 
-export const common = /* glsl */ `
-precision highp float;
-varying vec2 vUv;
-uniform vec2 uRes;
-uniform float uTime;
-
+export const lib = /* glsl */ `
 #define PI 3.14159265359
 #define TAU 6.28318530718
 
@@ -34,7 +29,14 @@ float fbm3(vec2 p){ float a = .5, s = 0.; for (int i = 0; i < 3; i++) { s += a *
 mat2 rot(float a){ float c = cos(a), s = sin(a); return mat2(c, -s, s, c); }
 float sat(float x){ return clamp(x, 0., 1.); }
 float luma(vec3 c){ return dot(c, vec3(.2126, .7152, .0722)); }
+`;
 
+export const common = /* glsl */ `
+precision highp float;
+varying vec2 vUv;
+uniform vec2 uRes;
+uniform float uTime;
+${lib}
 /** Height-normalised centred coordinates: y in [-.5,.5], x in [-aspect/2, aspect/2]. */
 vec2 pcoord(vec2 uv){ return (uv - .5) * vec2(uRes.x / uRes.y, 1.); }
 `;

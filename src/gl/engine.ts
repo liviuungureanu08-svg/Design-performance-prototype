@@ -6,6 +6,7 @@ import { seaFrag } from './scenes/sea';
 import { finaleFrag } from './scenes/finale';
 import { buildTextSdf } from './textsdf';
 import { portalFrag } from './transitions/portal';
+import { liquidFrag } from './transitions/liquid';
 
 export type SceneId = 0 | 1 | 2 | 3;
 
@@ -79,6 +80,7 @@ function rt(w: number, h: number, depth = false): THREE.WebGLRenderTarget {
     magFilter: THREE.LinearFilter,
     depthBuffer: depth,
     generateMipmaps: false,
+    samples: depth ? 4 : 0,
   });
 }
 
@@ -125,6 +127,12 @@ export class Engine {
       uP: { value: 0 },
       uAperture: { value: 0 },
       uLens: { value: 0 },
+      uMorph: { value: 0 },
+      uOpen: { value: 0 },
+      uFlood: { value: 0 },
+      uRipple: { value: 0 },
+      uAppear: { value: 1 },
+      uWorld: { value: 1 },
       uRect: { value: new THREE.Vector4(-1.2, -0.6, 2.4, 1.2) },
     };
 
@@ -139,6 +147,7 @@ export class Engine {
     this.addPass('sea', seaFrag);
     this.addPass('finale', finaleFrag);
     this.addPass('portal', portalFrag);
+    this.addPass('liquid', liquidFrag);
     this.addPass('post', postFrag);
     this.addPass('bright', brightFrag);
     this.addPass('blur', blurFrag);
@@ -190,8 +199,12 @@ export class Engine {
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
     this.renderer.setPixelRatio(dpr);
     this.renderer.setSize(w, h, false);
-    const rw = Math.max(2, Math.round(w * dpr * this.scale));
-    const rh = Math.max(2, Math.round(h * dpr * this.scale));
+    // the finale word is ~1.4 screen-heights wide: shrink it to fit portrait screens
+    this.u.uWorld.value = Math.min(1, (w / h) / 1.55);
+    // never shade more than ~1.7 megapixels per scene pass (phones with 3x screens)
+    const cap = Math.min(1, Math.sqrt(1.7e6 / (w * dpr * h * dpr * this.scale * this.scale)));
+    const rw = Math.max(2, Math.round(w * dpr * this.scale * cap));
+    const rh = Math.max(2, Math.round(h * dpr * this.scale * cap));
     this.size.set(rw, rh);
     [this.rtFrom, this.rtTo, this.rtComp].forEach((r) => r.setSize(rw, rh));
     const bw = Math.max(2, rw >> 2);

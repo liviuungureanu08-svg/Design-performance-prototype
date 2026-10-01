@@ -3,43 +3,49 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-    <meta name="theme-color" content="#07060d" />
-    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Ccircle cx=%2716%27 cy=%2716%27 r=%2711%27 fill=%27%23ffb066%27/%3E%3Ccircle cx=%2720%27 cy=%2716%27 r=%2710%27 fill=%27%2305040a%27/%3E%3C/svg%3E" />
-    <title>Ember / Tide — Visual Engineering Lab</title>
-    <meta name="description" content="A scroll-driven transformation in which one image physically becomes another." />
+    <meta name="theme-color" content="#05060a" />
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Ccircle cx=%2716%27 cy=%2716%27 r=%2710%27 fill=%27none%27 stroke=%27%23ffb066%27 stroke-width=%273%27/%3E%3C/svg%3E" />
+    <title>One Light — Visual Engineering Lab</title>
+    <meta name="description" content="A scroll-driven cinematic experience in four chapters: a sun becomes an aperture, a shell breaks open, a drop of light becomes a word." />
   </head>
   <body>
     <div id="stage">
       <canvas id="gl" aria-hidden="true"></canvas>
-      <div id="fallback" aria-hidden="true"><canvas id="fb-a"></canvas><canvas id="fb-b"></canvas></div>
-      <div class="vignette"></div>
+      <div id="poster" aria-hidden="true"></div>
       <div class="grain"></div>
 
       <header class="chrome">
         <span class="mark">Alfa&nbsp;<i>/</i>&nbsp;Lab</span>
-        <span class="chapter" id="chapter">Ch. 01 — Ember</span>
+        <span class="chapter" id="chapter">I &middot; Before</span>
       </header>
 
-      <section class="copy copy-a" id="copy-a">
-        <p class="kicker" data-split>Chapter one &middot; Ember</p>
-        <h1 data-split>Everything holds its shape<br /><em>until it doesn&rsquo;t.</em></h1>
-        <p class="lede" data-split>A scene is only matter that has agreed, for a moment, to stay where it is.</p>
+      <section class="copy c0" id="copy-0">
+        <p class="kicker" data-split>I &mdash; Before</p>
+        <h1 data-split>Before the first light,<br /><em>everything waited.</em></h1>
+        <p class="lede" data-split>A horizon is only a promise that something is about to be seen.</p>
       </section>
 
-      <section class="copy copy-m" id="copy-m">
-        <p data-split>Nothing is lost. Only rearranged.</p>
+      <section class="copy c1" id="copy-1">
+        <p class="kicker" data-split>II &mdash; Within</p>
+        <h2 data-split>The sky was never open.<br /><em>It was an aperture.</em></h2>
+        <p class="lede" data-split>One opening decides what the room is allowed to know.</p>
       </section>
 
-      <section class="copy copy-b" id="copy-b">
-        <p class="kicker" data-split>Chapter two &middot; Tide</p>
-        <h2 data-split>It was always going<br /><em>to become this.</em></h2>
-        <p class="lede" data-split>Every fragment carried the other image inside it. The light simply took the long way round.</p>
+      <section class="copy c2" id="copy-2">
+        <p class="kicker" data-split>III &mdash; Held</p>
+        <h2 data-split>Light, once let in,<br /><em>learns to be a surface.</em></h2>
+        <p class="lede" data-split>Held long enough, it stops arriving. It simply stays.</p>
+      </section>
+
+      <section class="copy c3" id="copy-3">
+        <p class="kicker" data-split>IV &mdash; Now</p>
+        <p class="line" data-split>Everything that was waiting is here.</p>
       </section>
 
       <footer class="chrome bottom">
         <span class="hint" id="hint"><b></b>Scroll</span>
         <span class="meter"><span id="meter"></span></span>
-        <span class="credit">Procedural art &middot; no third-party assets</span>
+        <span class="credit">Procedural &middot; no third-party assets</span>
       </footer>
     </div>
     <div id="runway" aria-hidden="true"></div>

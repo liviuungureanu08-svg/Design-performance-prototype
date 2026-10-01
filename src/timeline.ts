@@ -32,7 +32,7 @@ const curves: ((s: number) => number)[] = [
   // T2: tense hold (cracks creep), violent release, long settle
   (s) => {
     const k = smoothstep(0.0, 1.0, s);
-    return Math.pow(k, 1.15) * 0.4 + smoothstep(0.28, 0.72, s) * 0.6;
+    return s * 0.3 + k * 0.45 + smoothstep(0.3, 0.8, s) * 0.25;
   },
   // T3: pause on the shape, then flood
   (s) => {

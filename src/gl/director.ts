@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import { Engine, SUN } from './engine';
 import type { Beat } from '../timeline';
 import { clamp01, smoothstep } from '../scroll';
+import { FractureTransition } from './transitions/fracture';
 
 const SCENES = ['horizon', 'dome', 'sea', 'finale'] as const;
 const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
@@ -15,7 +16,10 @@ export interface Look {
 
 /** Turns a Beat (scene + transition progress) into render passes. All state derives from the Beat. */
 export class Director {
-  constructor(readonly eng: Engine) {}
+  private fracture: FractureTransition;
+  constructor(readonly eng: Engine) {
+    this.fracture = new FractureTransition(eng);
+  }
 
   private scene(i: number, target: THREE.WebGLRenderTarget, look: Look, z: number): void {
     const u = this.eng.u;
@@ -40,16 +44,35 @@ export class Director {
       this.scene(beat.scene, e.rtComp, look, 0);
     } else if (beat.tr === 0) {
       this.portal(beat.p, look);
-    } else {
-      // temporary stand-ins until the dedicated transitions land
-      this.scene(beat.scene, e.rtFrom, look, 0);
-      this.scene(beat.scene + 1, e.rtTo, look, 0);
+    } else if (beat.tr === 1) {
+      this.scene(1, e.rtFrom, look, 0);
+      this.scene(2, e.rtTo, look, 0);
       u.tFrom.value = e.rtFrom.texture;
       u.tTo.value = e.rtTo.texture;
       u.uP.value = beat.p;
-      e.pass('copy', e.rtComp);
+      this.fracture.render(beat.p);
+    } else {
+      this.liquid(beat.p, look);
     }
     e.post(e.rtComp);
+  }
+
+  /** T3 — the drop of light becomes the word. */
+  private liquid(p: number, look: Look): void {
+    const e = this.eng;
+    const u = e.u;
+    this.scene(2, e.rtFrom, look, 0);
+    u.uAppear.value = smoothstep(0.78, 1.0, p);
+    this.scene(3, e.rtTo, look, 0);
+    u.uAppear.value = 1;
+    u.tFrom.value = e.rtFrom.texture;
+    u.tTo.value = e.rtTo.texture;
+    u.uP.value = p;
+    u.uRipple.value = Math.sin(Math.PI * smoothstep(0, 0.45, p));
+    u.uOpen.value = smoothstep(0.04, 0.2, p);
+    u.uMorph.value = smoothstep(0.22, 0.62, p);
+    u.uFlood.value = Math.pow(smoothstep(0.68, 1.0, p), 1.6) * 1.7;
+    e.pass('liquid', e.rtComp);
   }
 
   /** T1 — the sun becomes the aperture. */

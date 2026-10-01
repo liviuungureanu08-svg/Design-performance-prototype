@@ -72,7 +72,7 @@ function smoothField(data: Uint16Array): void {
   const f = new Float32Array(W * H);
   for (let i = 0; i < W * H; i++) f[i] = THREE.DataUtils.fromHalfFloat(data[i]);
   const t = new Float32Array(W * H);
-  for (let pass = 0; pass < 2; pass++) {
+  for (let pass = 0; pass < 5; pass++) {
     for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
       const i = y * W + x;
       t[i] = (f[y * W + Math.max(0, x - 1)] + 2 * f[i] + f[y * W + Math.min(W - 1, x + 1)]) * 0.25;
