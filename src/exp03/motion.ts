@@ -11,9 +11,6 @@ import type { Params } from './design';
 import { POSSIBILITY } from './ether';
 
 const ss = (a: number, b: number, x: number) => { const t = Math.min(1, Math.max(0, (x - a) / (b - a))); return t * t * (3 - 2 * t); };
-const clamp01 = (x: number) => Math.min(1, Math.max(0, x));
-/** mass-like ease: slow start (anticipation), committed middle, long settle */
-const ease = (t: number) => { t = clamp01(t); return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2; };
 
 export const LE = 0.8; // length of the travelling light-boundary zone along the band (m of flat length)
 export const LM = 1.15; // length of the travelling matter zone
@@ -32,11 +29,11 @@ export interface Choreo {
 export function choreo(p: number, P: Params): Choreo {
   const u0 = P.f2 - 0.35;
   // matter frontier; the light boundary runs only a short distance ahead of it (never a complete outline)
-  const m = ease((p - 0.42) / (0.72 - 0.42));
+  const m = ss(0.4, 0.68, p);
   const uM = u0 + (P.end + LM - u0) * m;
   return {
     split: ss(0.14, 0.33, p),
-    uE: uM + 1.05 * ss(0.31, 0.46, p),
+    uE: uM + 1.05 * ss(0.3, 0.44, p),
     uM,
     emit: 1 - ss(0.73, 0.91, p),
     sun: ss(0.72, 0.93, p),
@@ -72,7 +69,8 @@ const GROW_COMMON = /* glsl */ `
     p += aDv * (aVf * (span - aWB));
     p += aDz * (aZf * (th - 1.));
     float fresh = gsm(aWA - .004, aWA + .03, aVf * span);  // only matter that did not exist in A
-    vEm = fresh * g * (1. - gsm(.22, 1., ms)) * (.3 + .7 * pow(aVf, 5.));
+    // the newest matter (its advancing front) still carries the light it came from, and cools behind it
+    vEm = fresh * gsm(0., .07, ms) * (1. - gsm(.1, .62, ms)) * (.4 + .6 * pow(aVf, 4.));
   }`;
 
 /** inject the build into a (physical) ceramic material: geometry + cooling emission of fresh matter */
@@ -84,7 +82,7 @@ export function growify(m: THREE.Material, U: BuildUniforms): void {
     s.vertexShader = s.vertexShader.replace('#include <common>', '#include <common>\n' + GROW_COMMON)
       .replace('#include <begin_vertex>', '#include <begin_vertex>\ngrow(transformed);');
     s.fragmentShader = s.fragmentShader.replace('#include <common>', '#include <common>\nvarying float vEm; uniform float uEmit; uniform vec3 uPoss;')
-      .replace('#include <emissivemap_fragment>', '#include <emissivemap_fragment>\ntotalEmissiveRadiance += uPoss * (vEm * uEmit * 0.55);');
+      .replace('#include <emissivemap_fragment>', '#include <emissivemap_fragment>\ntotalEmissiveRadiance += uPoss * (vEm * uEmit * 1.3);');
   };
   m.customProgramCacheKey = () => 'exp03-grow-' + m.type;
 }
