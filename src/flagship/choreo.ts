@@ -10,11 +10,13 @@ const CAM: { u: number; p: [number, number, number]; t: [number, number, number]
   { u: 0.25, p: [-8.0, 1.45, 27.1], t: [2.1, 1.5, 0] },
   { u: 0.38, p: [-6.4, 1.55, 25.2], t: [1.5, 1.7, -0.2] },
   { u: 0.52, p: [-3.6, 1.7, 24.0], t: [0.7, 2.2, -0.8] },
-  { u: 0.6, p: [-1.4, 1.8, 16.0], t: [0.3, 2.6, -1.2] },
-  { u: 0.68, p: [-0.4, 1.9, 8.5], t: [0.35, 3.0, -2.0] },
-  { u: 0.78, p: [0.25, 1.6, 2.8], t: [0.5, 2.4, -3.3] },
-  { u: 0.9, p: [0.25, 1.55, 2.5], t: [0.8, 2.3, -3.3] },
-  { u: 1.0, p: [0.25, 1.55, 2.35], t: [0.85, 2.3, -3.3] },
+  { u: 0.6, p: [-1.5, 1.8, 16.5], t: [0.6, 2.6, -1.2] },
+  { u: 0.68, p: [-0.7, 1.9, 9.0], t: [1.0, 2.9, -2.0] },
+  { u: 0.74, p: [-0.55, 1.75, 5.2], t: [1.2, 2.7, -3.0] },
+  { u: 0.8, p: [-0.15, 1.62, 2.4], t: [1.0, 2.5, -3.3] },
+  { u: 0.88, p: [0.15, 1.56, 1.1], t: [0.9, 2.35, -3.3] },
+  { u: 0.95, p: [0.22, 1.55, 0.8], t: [0.85, 2.3, -3.3] },
+  { u: 1.0, p: [0.23, 1.55, 0.72], t: [0.85, 2.3, -3.3] },
 ];
 const cc = (sel: (k: (typeof CAM)[number]) => number) => new Curve(CAM.map((k) => [k.u, sel(k)] as [number, number]));
 const camC = { px: cc((k) => k.p[0]), py: cc((k) => k.p[1]), pz: cc((k) => k.p[2]), tx: cc((k) => k.t[0]), ty: cc((k) => k.t[1]), tz: cc((k) => k.t[2]) };
@@ -88,6 +90,8 @@ export class Choreo {
     this.exposure = C.exposure.at(u);
     this.shift = C.shift.at(u);
     this.fov = C.fov.at(u);
+    w.mirror.visible = u < 0.62;
+    (w.mirror.material as THREE.ShaderMaterial).uniforms.uK.value = 2.2 * (1 - smooth(0.46, 0.6, u));
     w.syncUniforms();
 
     // --- camera

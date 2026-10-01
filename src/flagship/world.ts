@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { RoundedBoxGeometry } from 'three/examples/jsm/geometries/RoundedBoxGeometry.js';
+import { Reflector } from 'three/examples/jsm/objects/Reflector.js';
 import { U, patch } from './shading';
 
 type V3 = [number, number, number];
@@ -31,6 +32,7 @@ export class World {
   fins: Fin[] = [];
   slot: THREE.Mesh;
   housing: THREE.Mesh[] = [];
+  mirror: Reflector;
   glass: THREE.MeshPhysicalMaterial;
   slotMat: THREE.MeshBasicMaterial;
 
@@ -100,8 +102,34 @@ export class World {
     patch(gm, 'ground');
     const ground = new THREE.Mesh(new THREE.PlaneGeometry(400, 400), gm);
     ground.rotation.x = -Math.PI / 2;
-    ground.position.y = -0.3;
+    ground.position.y = -0.02;
     s.add(ground);
+
+    // polished-floor reflection of the monolith: additive, softened, faded with distance from the plinth (exterior only)
+    const MirrorShader = {
+      name: 'SoftMirror',
+      uniforms: { color: { value: null }, tDiffuse: { value: null }, textureMatrix: { value: null }, uK: { value: 2.2 } },
+      vertexShader: 'uniform mat4 textureMatrix; varying vec4 vUv; varying vec3 vW; void main(){ vUv = textureMatrix * vec4(position, 1.0); vW = (modelMatrix * vec4(position, 1.0)).xyz; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }',
+      fragmentShader: /* glsl */ `
+        uniform sampler2D tDiffuse; uniform float uK; varying vec4 vUv; varying vec3 vW;
+        void main(){
+          vec2 uv = vUv.xy / vUv.w;
+          float r = 0.0045;
+          vec3 c = texture2D(tDiffuse, uv).rgb * 0.2;
+          for (int i = 0; i < 8; i++) { float a = float(i) * 0.785398; vec2 o = vec2(cos(a), sin(a)); c += texture2D(tDiffuse, uv + o * r).rgb * 0.1 + texture2D(tDiffuse, uv + o * r * 2.2).rgb * 0.0; }
+          float d = length(vW.xz - vec2(-0.3, 0.0));
+          float fade = exp(-d * 0.12) * smoothstep(0.0, 1.0, 1.0 - exp(-d * 3.0) * 0.0);
+          gl_FragColor = vec4(min(c, vec3(4.0)) * uK * fade, 1.0);
+        }`,
+    };
+    this.mirror = new Reflector(new THREE.PlaneGeometry(120, 120), { textureWidth: 768, textureHeight: 768, shader: MirrorShader, clipBias: 0.003, multisample: 0 });
+    this.mirror.rotation.x = -Math.PI / 2;
+    this.mirror.position.y = 0.004; this.mirror.renderOrder = 1;
+    const mm = this.mirror.material as THREE.ShaderMaterial;
+    mm.transparent = true;
+    mm.blending = THREE.AdditiveBlending;
+    mm.depthWrite = false;
+    s.add(this.mirror);
   }
 
   /** Update analytic occluder bounds from the live mesh offsets. */

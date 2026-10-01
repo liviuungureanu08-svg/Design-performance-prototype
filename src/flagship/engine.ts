@@ -88,7 +88,12 @@ export class Engine {
     this.choreo.apply(u, parts.L, parts.R, parts.C, parts.F);
     const o = this.camOverride;
     if (o) { this.camera.position.set(o[0], o[1], o[2]); this.camera.lookAt(o[3], o[4], o[5]); this.choreo.shift = o[6] ?? 0; }
-    else { this.camera.position.copy(this.choreo.camPos).add(drift); this.camera.lookAt(this.choreo.camTarget); }
+    else {
+      // portrait cinematography: the landscape composition offsets the subject sideways; recentre it as the frame narrows
+      const k = Math.min(1, Math.max(0, (this.camera.aspect - 0.45) / 1.3));
+      this.camera.position.copy(this.choreo.camPos).add(drift);
+      this.camera.lookAt(this.choreo.camTarget.x * k, this.choreo.camTarget.y, this.choreo.camTarget.z);
+    }
     // architectural lens shift: verticals stay straight while the monolith is observed, then it relaxes into a real tilt
     const fovNow = this.baseFov + (this.choreo.fov - 30);
     if (Math.abs(this.camera.fov - fovNow) > 1e-4) { this.camera.fov = fovNow; this.camera.updateProjectionMatrix(); this.baseProj.copy(this.camera.projectionMatrix); }
