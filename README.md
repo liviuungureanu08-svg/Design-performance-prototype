@@ -90,6 +90,10 @@ keeps advancing); 220 ms after the viewer stops, accumulation restarts clean and
 Progress is SmoothDamp(0.26 s) of the scroll position, snapped exactly onto it at rest (same position → same image).
 Float32 accumulation falls back to half float where the GPU can't render to float32 (common on phones).
 
+**Hosted phone preview (public):** https://rawcdn.githack.com/liviuungureanu08-svg/Design-performance-prototype/e53ec707ea2bdc65f9c550cfb4aba6d10c45c167/artifact/exp03-preview/exp03.html
+(production build of `exp03.html` committed at `artifact/exp03-preview/`, no source changes; githack shows a one-time
+"Open the page" step first. Verified in headless Chromium/SwiftShader at 390×844: 3D renders, scroll drives it, reverse restores
+it, byte-identical to the local build; not yet verified on a physical phone.)
 **Review.** `npm run dev` → `/exp03.html` (scroll), `/exp03.html?t=0.5` (frozen at 50 %, converges), `?view=a|b|ab|sil`
 (static endpoints, unchanged). Freeze frames: `node scripts/shot03.mjs "view=motion&t=0.5&spp=64" out.png 1600x900`.
 Robustness: `node scripts/robust03.mjs`. Representative frames: `artifact/exp03/motion/`.
