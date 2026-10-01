@@ -12,7 +12,7 @@ import { POSSIBILITY } from './ether';
 
 const ss = (a: number, b: number, x: number) => { const t = Math.min(1, Math.max(0, (x - a) / (b - a))); return t * t * (3 - 2 * t); };
 
-export const LE = 0.8; // length of the travelling light-boundary zone along the band (m of flat length)
+export const LE = 1.0; // length of the travelling light-boundary zone along the band (m of flat length)
 export const LM = 1.15; // length of the travelling matter zone
 
 export interface Choreo {
@@ -33,7 +33,8 @@ export function choreo(p: number, P: Params): Choreo {
   const uM = u0 + (P.end + LM - u0) * m;
   return {
     split: ss(0.14, 0.33, p),
-    uE: uM + 1.05 * ss(0.27, 0.41, p),
+    // the boundary reaches ahead during the paradox, then tightens to the matter once matter moves (never a full outline)
+    uE: uM + 1.55 * ss(0.26, 0.42, p) - 0.5 * ss(0.42, 0.56, p),
     uM,
     emit: 1 - ss(0.73, 0.91, p),
     sun: ss(0.72, 0.93, p),
@@ -200,26 +201,31 @@ const env = (u: number, a: number, b: number, c: number, d: number) => ss(a, b, 
 export function lightLine(f: Folder, u0: number, u1: number, fade: [number, number, number, number], width: number, intensity: number,
   vA: (u: number, a: number) => number, vB: (u: number, a: number) => number, mode: 0 | 1 | 2, U: BuildUniforms, core = 1.6): THREE.Mesh {
   const lines = f.isolines(u0, u1, 0.008, 12);
-  const pa: number[] = [], pb: number[] = [], ta: number[] = [], tb: number[] = [], side: number[] = [], amp: number[] = [], au: number[] = [], idx: number[] = [];
+  const pa: number[] = [], pb: number[] = [], qa: number[] = [], qb: number[] = [], ra: number[] = [], rb: number[] = [], side: number[] = [], amp: number[] = [], au: number[] = [], qu: number[] = [], ru: number[] = [], idx: number[] = [];
   const pts = lines.map((L) => {
     const t = Math.tan(L.a), va = vA(L.u, L.a), vb = vB(L.u, L.a);
     return { u: L.u, A: f.F(L.u + va * t, va, 0), B: f.F(L.u + vb * t, vb, 0) };
   });
   for (let i = 0; i < pts.length; i++) {
+    // neighbours (both states) so the shader can take the true tangent of the blended curve
     const q = pts[Math.min(pts.length - 1, i + 1)], r = pts[Math.max(0, i - 1)];
-    const tA = q.A.clone().sub(r.A).normalize(), tB = q.B.clone().sub(r.B).normalize();
     const a = env(pts[i].u, ...fade);
     for (const s of [-1, 1]) {
       pa.push(pts[i].A.x, pts[i].A.y, pts[i].A.z); pb.push(pts[i].B.x, pts[i].B.y, pts[i].B.z);
-      ta.push(tA.x, tA.y, tA.z); tb.push(tB.x, tB.y, tB.z); side.push(s); amp.push(a); au.push(pts[i].u);
+      qa.push(q.A.x, q.A.y, q.A.z); qb.push(q.B.x, q.B.y, q.B.z); ra.push(r.A.x, r.A.y, r.A.z); rb.push(r.B.x, r.B.y, r.B.z);
+      side.push(s); amp.push(a); au.push(pts[i].u); qu.push(q.u); ru.push(r.u);
     }
     if (i > 0) { const k = (i - 1) * 2; idx.push(k, k + 1, k + 2, k + 1, k + 3, k + 2); }
   }
   const g = new THREE.BufferGeometry();
   g.setAttribute('position', new THREE.Float32BufferAttribute(pa, 3));
   g.setAttribute('posB', new THREE.Float32BufferAttribute(pb, 3));
-  g.setAttribute('tang', new THREE.Float32BufferAttribute(ta, 3));
-  g.setAttribute('tangB', new THREE.Float32BufferAttribute(tb, 3));
+  g.setAttribute('nA', new THREE.Float32BufferAttribute(qa, 3));
+  g.setAttribute('nB', new THREE.Float32BufferAttribute(qb, 3));
+  g.setAttribute('pA', new THREE.Float32BufferAttribute(ra, 3));
+  g.setAttribute('pB', new THREE.Float32BufferAttribute(rb, 3));
+  g.setAttribute('nU', new THREE.Float32BufferAttribute(qu, 1));
+  g.setAttribute('pU', new THREE.Float32BufferAttribute(ru, 1));
   g.setAttribute('side', new THREE.Float32BufferAttribute(side, 1));
   g.setAttribute('amp', new THREE.Float32BufferAttribute(amp, 1));
   g.setAttribute('aU', new THREE.Float32BufferAttribute(au, 1));
@@ -228,22 +234,33 @@ export function lightLine(f: Folder, u0: number, u1: number, fade: [number, numb
     uniforms: { width: { value: width }, core: { value: core }, color: { value: POSSIBILITY.clone().multiplyScalar(intensity) }, ...U },
     defines: { MODE: mode },
     vertexShader: /* glsl */ `
-      attribute vec3 posB; attribute vec3 tang; attribute vec3 tangB; attribute float side; attribute float amp; attribute float aU;
+      attribute vec3 posB; attribute vec3 nA; attribute vec3 nB; attribute vec3 pA; attribute vec3 pB; attribute float nU; attribute float pU;
+      attribute float side; attribute float amp; attribute float aU;
       uniform float width, uM, uE, uLM, uLE, uSplit, uEmit; varying float vS; varying float vA;
       float gsm(float a, float b, float x){ float t = clamp((x - a) / (b - a), 0., 1.); return t * t * (3. - 2. * t); }
+      // where along the way from state A (spine side) to state B (outer edge) this line is, at flat position u
+      float kAt(float u){
+        #if MODE == 0
+          return uSplit;
+        #elif MODE == 1
+          return 0.;
+        #else
+          return gsm(0., .85, clamp((uE - u) / uLE, 0., 1.));
+        #endif
+      }
       void main(){
         float ms = clamp((uM - aU) / uLM, 0., 1.), es = clamp((uE - aU) / uLE, 0., 1.);
-        float k, a;
+        float k = kAt(aU), a;
         #if MODE == 0
-          k = uSplit; a = amp;
+          a = amp;
         #elif MODE == 1
-          k = 0.; a = amp * (1. - gsm(0., .55, ms));
+          a = amp * (1. - gsm(0., .55, ms));
         #else
-          k = gsm(0., .62, es); a = amp * gsm(.02, .3, es) * (1. - gsm(.2, .62, ms));
+          a = amp * gsm(.02, .3, es) * (1. - gsm(.2, .62, ms)) * (.35 + .65 * k); // born faint at the spine
         #endif
         a *= uEmit;
         vec3 wp = (modelMatrix * vec4(mix(position, posB, k), 1.)).xyz;
-        vec3 t = normalize(mix(tang, tangB, k));
+        vec3 t = normalize(mix(nA, nB, kAt(nU)) - mix(pA, pB, kAt(pU)) + 1e-6);
         vec3 vd = normalize(cameraPosition - wp);
         wp += normalize(cross(t, vd)) * side * width;
         vS = side; vA = a;
