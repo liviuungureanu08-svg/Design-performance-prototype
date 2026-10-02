@@ -2,7 +2,7 @@
 
 **Status: PROVEN · CLOSED · HARVESTED** (2026-10-02). Human WOW: **NO**. Experience Library: **CANDIDATE**.
 ALFA Core: **no automatic promotion**. Final implementation: commit `10a0145` (unchanged in the closure commit, which carries
-the tag `exp03-final`).
+the local tag `exp03-final`; tag push refused by the remote, as for earlier tags).
 
 This file is the authoritative closure record for Experiment 03. Implementation details stay in the repository README
 (section *Experiment 03*); the canonical visual reasoning stays in the frozen Master
