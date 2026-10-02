@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#f3f2ee" />
+    <title>Gabriel Solutions — Inbound</title>
+    <meta name="description" content="Everything that arrives at a business goes somewhere: website, app, automation, AI — and only what needs judgment reaches you. Gabriel Solutions designs and builds that system." />
+    <link rel="icon" href="data:," />
+    <link rel="preload" href="fonts/inter-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <header class="top">
+      <a class="mark" href="#stage">Gabriel Solutions</a>
+      <nav class="biz" aria-label="Example business shown in the field">
+        <span class="biz-k" aria-hidden="true">Showing</span>
+        <button type="button" data-biz="clinic" aria-pressed="true">Clinic</button>
+        <button type="button" data-biz="hotel" aria-pressed="false">Hotel</button>
+        <button type="button" data-biz="interiors" aria-pressed="false">Interiors</button>
+        <button type="button" data-biz="roaster" aria-pressed="false">Roaster</button>
+      </nav>
+    </header>
+
+    <main>
+      <section class="stage" id="stage" aria-labelledby="h1">
+        <canvas id="field" aria-hidden="true"></canvas>
+        <div class="intro">
+          <p class="eyebrow" id="eyebrow">A dental clinic · Tuesday evening · shown 360× faster</p>
+          <h1 id="h1">It never stops arriving.</h1>
+          <p class="lede">Every card is a customer waiting for an answer. <span class="nowrap">Hold anywhere</span> to run the system Gabriel&nbsp;Solutions builds, and see where each one goes.</p>
+        </div>
+        <p class="sr" id="desc">A live field of customer messages. While the system is off they pile up and turn amber, then red, the longer they wait. While it runs, each one is taken to the website, the app, automation or AI, and only the few that need a person go to “You”.</p>
+        <aside class="insight" id="insight" hidden><b>Noticed</b><span id="insight-t"></span></aside>
+        <div class="hud">
+          <p class="status" id="status" aria-hidden="true">&nbsp;</p>
+          <div class="controls">
+            <button type="button" class="hold" id="hold" aria-describedby="holdhelp"><i class="ring" aria-hidden="true"></i><span id="hold-l">Hold to run the system</span></button>
+            <button type="button" class="latch" id="latch" aria-pressed="false">Keep it running</button>
+          </div>
+          <p class="sr" id="holdhelp">Press and hold anywhere on the field, or hold the space bar. “Keep it running” switches the system on without holding.</p>
+        </div>
+        <p class="sr" id="live" aria-live="polite"></p>
+      </section>
+
+      <section class="where" id="where" aria-labelledby="wh">
+        <p class="eyebrow">Where it went</p>
+        <h2 id="wh">Nothing was ignored. Almost nothing needed you.</h2>
+        <p class="session" id="session">You haven’t run it yet. <button type="button" class="link" id="run10">Run it for ten seconds</button></p>
+        <ol class="lanes">
+          <li><h3>Website</h3><p>Answers before anyone has to. Prices, hours, parking, policies: real pages for the real questions, in the language people ask in.</p><b data-n="site">0</b></li>
+          <li><h3>App &amp; platform</h3><p>Bookings, orders, changes and accounts customers handle themselves, connected to your calendar and stock.</p><b data-n="app">0</b></li>
+          <li><h3>Automation</h3><p>Invoices, reminders, payments, files and couriers move on their own, and tell people when they did.</p><b data-n="auto">0</b></li>
+          <li><h3>AI</h3><p>Reads every message, understands what it is, replies in your voice and in their language. Hands over anything it should not decide.</p><b data-n="ai">0</b></li>
+          <li class="you"><h3>You</h3><p>Only what needs judgment: the urgent, the upset, the big. Already sorted, with the history attached.</p><b data-n="you">0</b></li>
+        </ol>
+      </section>
+
+      <section class="yours" id="yours" aria-labelledby="yh">
+        <p class="eyebrow">Your business</p>
+        <h2 id="yh">What arrives at yours?</h2>
+        <ol class="chain">
+          <li><b>Understand</b> what arrives</li>
+          <li><b>Design</b> where each thing goes</li>
+          <li><b>Build</b> the website, app, automation and AI that take it there</li>
+          <li><b>Amplify</b> what the patterns show</li>
+        </ol>
+        <a class="cta" href="mailto:hello@gabrielsolutions.example?subject=What%20arrives%20at%20my%20business">Tell us what arrives at your business <span aria-hidden="true">→</span></a>
+        <p class="note">Illustrative. The businesses, names and messages are invented; the contact address is a placeholder.</p>
+      </section>
+    </main>
+    <footer class="foot">Gabriel Solutions · Websites · Apps &amp; platforms · AI · Automation</footer>
+    <noscript><p class="nojs">This page shows a live field of customer messages being routed by a system. Without JavaScript: Gabriel Solutions designs and builds the website, app, automation and AI that answer, book, process and reply to what arrives at your business, and leave you only what needs judgment.</p></noscript>
+    <script type="module" src="main.js"></script>
+  </body>
+</html>
