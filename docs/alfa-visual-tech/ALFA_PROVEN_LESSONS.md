@@ -1,12 +1,12 @@
 # ALFA-Proven Lessons
 
 Only lessons verified against this repository's code and READMEs (Round 1 tag `round-1-complete`, Round 2 tag
-`round-2-complete`, Flagship 01 tag `flagship01-final`, Experiment 02 at `src/exp02/`). Everything here is `[ALFA-PROVEN]`
-**within these limits**: every verification ran in software GL (SwiftShader) in headless Chromium. **No real-GPU frame rate or phone GPU
-has ever been measured.** Where a "lesson" is only a decision that was never measured, it is marked *(decision, unmeasured)*.
+`round-2-complete`, Flagship 01 tag `flagship01-final`, Experiment 02 at `src/exp02/`, Experiment 03 tag `exp03-final`). Everything here is `[ALFA-PROVEN]`
+**within these limits**: every verification ran in software GL (SwiftShader) in headless Chromium. **No real-GPU frame rate
+has ever been measured.** The only physical-device evidence is one phone rendering check (Exp 03, AL23). Where a "lesson" is only a decision that was never measured, it is marked *(decision, unmeasured)*.
 
 Human verdicts so far: R1 "an effect between two images". Flagship 01: technical PASS, premium art direction PARTIAL, human wow NOT
-achieved. Exp 02: awaiting review. So none of these lessons proves anything *looks* premium. They prove what *works technically*.
+achieved. Exp 02: awaiting review. Exp 03: concept proven, premium motion PASS, human WOW NO (`docs/experiments/EXP03_THE_UNBUILT.md`). So none of these lessons proves anything *looks* premium. They prove what *works technically*.
 
 | # | Lesson | Evidence |
 |---|---|---|
@@ -32,3 +32,5 @@ achieved. Exp 02: awaiting review. So none of these lessons proves anything *loo
 | AL20 | **Text as SDF is a geometry source for morphs.** Rasterise the glyphs, run an EDT to get a half-float SDF texture, and the circle → word morph works. Serif tips soften at 1024×512. | R2 `src/gl/textsdf.ts` (tag `round-2-complete`). |
 | AL21 | **Large shadow maps were chosen without measurement** *(decision, unmeasured)*. Exp02 uses 4096² desktop / 2048² mobile PCF. A candidate for the first real-GPU measurement. | `src/exp02/scene.ts` L299. |
 | AL22 | **A planar `Reflector` at reduced resolution is enough for still water and a floor mirror.** Flagship 768², Exp02 0.7 × capped-DPR viewport. A full-resolution mirror was never needed. | `src/flagship/world.ts` L129, `src/exp02/scene.ts` L251–253. |
+| AL23 | **Never LINEAR-sample float32 render targets unless `OES_texture_float_linear` is present; use NEAREST for 1:1 full-screen passes.** Most phone GPUs lack the extension; a linearly filtered float32 target is then incomplete and samples black: UI visible, scene black, no error. SwiftShader and desktop GPUs hide it. Detecting `EXT_color_buffer_float` alone is not enough. | Exp03 on a physical Android phone (Chrome: black scene). Reproduced in SwiftShader by withholding only that extension; fixed with NEAREST accumulation targets (`src/exp03/scene.ts`, commit `10a0145`), human-verified on a physical phone (Brave). Desktop output changed by ≤1/255 on 0.01 % of pixels. `?diag` device report: `src/exp03/diag.ts`. |
+| AL24 | **Grow structure over a rigid parametrisation, not by scaling meshes.** Building the final geometry once and narrowing it per rigid isoline of a developable folding map gives exact intermediate geometry (nothing scales from zero, nothing pops) and stays a pure function of progress. Zero-extent ungrown matter must be fully degenerate (width *and* thickness), or it rasterises as slivers. | `src/exp03/motion.ts` (`growPlate`, `grow()`), Exp03 README *Motion Proof*. Software GL only. |

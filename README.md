@@ -4,7 +4,11 @@
 |---|---|---|
 | Flagship 01 — Monolith / Inner Architecture | `index.html` (`src/main.ts`, `src/flagship/`) | **CLOSED as R&D.** Technical PASS · spatial transition PASS · premium art direction PARTIAL · human wow NOT ACHIEVED · productization NOT YET. Reusable idea: spatial entry / scale reinterpretation (exterior object → entry → scale change → navigable interior); possible future use = spatial portfolio navigation (future context only, not implemented). Final state: commit `63ab9be`, local tag `flagship01-final` (tag push refused by the remote). |
 | Experiment 02 — The Vale of Orrin (semantic material transformation) | `exp02.html` (`src/exp02/`) | Gates A–C self-assessed PASS, D partial, E done in software GL. **Awaiting human review. Not approved, not reusable/productizable until a human says so.** |
-| Experiment 03 — The Unbuilt (Gabriel Solutions) | `exp03.html` (`src/exp03/`) | Static endpoints: human review PASS (foundation, premium direction, A↔B identity). **Motion Proof implemented (default view): HUMAN MOTION REVIEW REQUIRED.** Human WOW not validated. Experience Library candidate, not productized. |
+| Experiment 03 — The Unbuilt (Gabriel Solutions) | `exp03.html` (`src/exp03/`) | **PROVEN · CLOSED · HARVESTED.** Human Motion Review: technical motion PASS · real-device mobile 3D PASS (physical phone, Brave) · A→B ancestry PASS · camera restraint PASS · lighting handoff PASS (minor reservation) · signature transformation conceptual PASS / perceptual PARTIAL · **human WOW NO**. Experience Library CANDIDATE (not engineered, not a template). No ALFA Core promotion. Final implementation `10a0145`; closure tagged `exp03-final`. Closure & harvest record: `docs/experiments/EXP03_THE_UNBUILT.md`. |
+
+**Next gate (recorded, not started):** lock the Experiment 01 protocol (CONTROL vs ALFA Generative Intelligence, same real
+Gabriel Solutions brief, same model class, comparable budget, criteria locked first) before observing More Than Pixels.
+Sequence: `docs/experiments/EXP03_THE_UNBUILT.md` §8. The Unbuilt is pre-Foundation evidence, not Experiment 01's control.
 
 ## Agent guidance: visual work
 Two separate libraries, used in this order and never both loaded whole by default:
@@ -28,7 +32,14 @@ Khronos glTF sample assets), labelled `[EXTERNAL]` / `[ALFA-PROVEN]`, with licen
 Future agents: read `docs/alfa-visual-tech/README.md` (router), then `SELECTION_MATRIX.md`, then only the 1–2 files it names. Don't read the whole library.
 No dependencies were added for it.
 
-## Experiment 03 — The Unbuilt (static endpoints + Motion Proof)
+## Experiment 03 — The Unbuilt (CLOSED · PROVEN · HARVESTED)
+**Closed 2026-10-02 after Human Motion Review.** Authoritative verdict, harvested lessons (observation → interpretation →
+candidate → confidence → status), Experience Library candidate (*spatial / structural reinterpretation*), evidence ledger, stop
+reason and next gate: `docs/experiments/EXP03_THE_UNBUILT.md`. Central finding: structural transformation preserved ancestry and
+read as premium and coherent, but technical continuity alone did not create WOW; the reveal read as *progressively constructed*
+rather than *retrospectively inevitable* (human WOW NO). The implementation below is frozen at tag `exp03-final`; its
+remaining weaknesses are harvested evidence, not a to-do list.
+
 **Thesis: imagination becomes structure.** Brand: Gabriel Solutions. Hero object (internal name *The Fold*): one thick band,
 folded three times about skewed fold lines into an asymmetric loop that never closes, split along its whole length by a
 30 mm slit, **the Spine**. Everything derives from one flat development (`design.ts` → `fold.ts`: a developable folding map
@@ -88,12 +99,13 @@ nudged ≈0.12 m) peaking around 45–55 % and gone by ~86 %: observer → inves
 **Rendering while scrolling.** Each frame renders 2 passes (`?mpp=`) with a short history (new pass weight ≥ 1/3, sample sequence
 keeps advancing); 220 ms after the viewer stops, accumulation restarts clean and converges to the full still (`?spp=`, default 96).
 Progress is SmoothDamp(0.26 s) of the scroll position, snapped exactly onto it at rest (same position → same image).
-Float32 accumulation falls back to half float where the GPU can't render to float32 (common on phones).
+Float32 accumulation falls back to half float where the GPU can't render to float32. Accumulation targets are sampled with
+NEAREST (1:1 full-screen passes): with LINEAR, phones lacking `OES_texture_float_linear` rendered a black scene (fixed in `10a0145`;
+`?diag` shows a device report).
 
-**Hosted phone preview (public):** https://rawcdn.githack.com/liviuungureanu08-svg/Design-performance-prototype/e53ec707ea2bdc65f9c550cfb4aba6d10c45c167/artifact/exp03-preview/exp03.html
-(production build of `exp03.html` committed at `artifact/exp03-preview/`, no source changes; githack shows a one-time
-"Open the page" step first. Verified in headless Chromium/SwiftShader at 390×844: 3D renders, scroll drives it, reverse restores
-it, byte-identical to the local build; not yet verified on a physical phone.)
+**Hosted phone preview (public, final):** https://rawcdn.githack.com/liviuungureanu08-svg/Design-performance-prototype/10a014585555763d63a4e7622c229b452b2e970a/artifact/exp03-preview/exp03.html
+(production build at `artifact/exp03-preview/`; githack shows a one-time "Open the page" step first). Verified by the human reviewer
+on a physical phone (Brave). The earlier URL pinned to `e53ec70` is the pre-fix build that rendered black on the phone.
 **Review.** `npm run dev` → `/exp03.html` (scroll), `/exp03.html?t=0.5` (frozen at 50 %, converges), `?view=a|b|ab|sil`
 (static endpoints, unchanged). Freeze frames: `node scripts/shot03.mjs "view=motion&t=0.5&spp=64" out.png 1600x900`.
 Robustness: `node scripts/robust03.mjs`. Representative frames: `artifact/exp03/motion/`.
@@ -115,11 +127,11 @@ for a moment it can read as a drawn outline (close to the wireframe-reveal clich
 the spine near the last fold (≈50–53 %). Other known weaknesses: fresh-matter emission reads slightly white/flat at its
 brightest (≈50 %); the 60–72 % "understanding" frames are dark (A's lighting, intentionally calm) and may feel like a lull;
 the moving image is lighter (2 passes/frame with short history) and only the stopped image is fully converged; nothing was
-measured on a real GPU or phone; the half-float phone fallback is untested on a device; the earlier private artifact
-(static page) showed no 3D on the reviewer's phone and has not been re-published — use the local route or the frames in
+measured on a real GPU (rendering was later verified on one physical phone, frame rate never measured); the earlier private
+artifact (static page) showed no 3D on the reviewer's phone — see the hosted preview above or the frames in
 `artifact/exp03/motion/` (`contact-sheet.jpg`, `p000…p100.jpg`, `phone-*.jpg`).
 
-**HUMAN MOTION REVIEW REQUIRED. Human WOW not claimed.**
+**Human Motion Review completed 2026-10-02: concept PROVEN, human WOW NO, experiment CLOSED** (`docs/experiments/EXP03_THE_UNBUILT.md`).
 
 ## Experiment 02 — The Vale of Orrin
 **Concept: map → territory.** Scene A is a printed survey sheet (contour map with hypsometric tints, engraved
