@@ -16,7 +16,7 @@ const title = html.match(/<title>(.*?)<\/title>/)[1];
 const out = `<meta charset="utf-8">
 <title>${title}</title>
 <style>${css}
-html,body{background:${PAGE === 'index' ? '#05060a' : '#6f767b'};margin:0}body{min-height:100vh}</style>
+html,body{background:${PAGE === 'index' ? '#05060a' : PAGE === 'exp01' ? '#ece6d9' : '#6f767b'};margin:0}body{min-height:100vh}</style>
 ${body}
 <script type="module">${js}</script>
 `;
