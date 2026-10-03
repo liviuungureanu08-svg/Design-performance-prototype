@@ -1,0 +1,28 @@
+PASS  desktop: WebGL world created
+PASS  desktop: hero headline revealed
+PASS  desktop: pointer movement deposits presence trail  — 19 live samples
+PASS  desktop: presence head active while pointer inside  — strength 1.00
+PASS  desktop: click emits ripple
+PASS  desktop: nav "Commissions" scrolls to scene reading position  — scrollY 9520 target 9520
+PASS  desktop: commissions list visible
+PASS  desktop: hovering commission III switches wall programme  — {"b":2,"active":"2"}
+PASS  desktop: keyboard focus selects commission
+PASS  desktop: sound toggle on
+PASS  desktop: sound toggle off
+PASS  desktop: commission form responds  — Noted. A studio lead will reply within two working days.
+PASS  desktop: no horizontal overflow  — 0px
+PASS  desktop: rapid scroll reversal keeps timeline finite  — t=7.598
+PASS  desktop: JS per-frame cost recorded  — avg 1.47 ms, recent max 207.86 ms (SwiftShader, includes GL command submission)
+PASS  reduced: html.reduced set
+PASS  reduced: intro sweep skipped  — uIntro -0.4
+PASS  reduced: ambient motion disabled
+PASS  reduced: scene snaps to discrete hold state (no camera flight)  — t=3.8
+PASS  reduced: works text visible at hold
+PASS  mobile: portrait grid used
+PASS  mobile: tap reaches the wall
+PASS  mobile: no horizontal overflow  — 0px
+PASS  mobile: custom cursor hidden on touch
+PASS  mobile: nav hidden, readout shown
+PASS  desktop: console errors/warnings  — none
+PASS  reduced: console errors/warnings  — none
+PASS  mobile: console errors/warnings  — none
