@@ -1,0 +1,56 @@
+PASS  Ancore: fiecare link intern are țintă  — 16 linkuri, lipsă: []
+PASS  Fără linkuri externe / moarte  — []
+PASS  Navigare → #foc  — top=63px
+PASS  Navigare → #meniu  — top=63px
+PASS  Navigare → #degustare  — top=63px
+PASS  Navigare → #spatiu  — top=63px
+PASS  Navigare → #contact  — top=151px (capăt de pagină; secțiunea e integral vizibilă)
+PASS  CTA hero „Cere o masă” → #rezervare
+PASS  CTA hero „Vezi meniul” → #meniu
+PASS  Meniu: 2 preparate notate (aria-pressed)  — 2 preparate notate: Păstrăv, unt brun și praz · Pară, miere și fum.
+PASS  Meniu: de-notare funcționează
+PASS  Preparatul notat apare în formular  — Păstrăv, unt brun și praz
+PASS  Degustare: switch asociere (aria-checked, status)
+PASS  Seara: tastatura mută ora (19:30) și CTA  — 19:30 / Cere o masă la 19:30
+PASS  Seara: CTA preselectează ora 19:30 în formular
+PASS  Formular gol: rezumat erori focusat  — 4 erori (ora era preselectată), focus=form-errors
+PASS  Formular: aria-invalid pe câmpuri
+PASS  Email incomplet respins
+PASS  Luni respinsă (închis)
+PASS  Dată trecută respinsă
+PASS  Cerere validă → confirmare locală vizibilă și focusată
+PASS  Confirmare: rezumat corect
+PASS  Mențiune demonstrativă lângă confirmare
+PASS  Zero requesturi de rețea la validare/trimitere  — []
+PASS  Zero persistență (localStorage/sessionStorage/cookie/IndexedDB)  — {"ls":0,"ss":0,"cookie":"","idb":0}
+PASS  URL neschimbat (fără query cu date)  — http://127.0.0.1:4174/#rezervare
+PASS  „Completează altă cerere” resetează formularul
+PASS  Toate resursele sunt locale  — ["127.0.0.1:4174"]
+PASS  Zero erori runtime / resurse lipsă (desktop)  — []
+PASS  Azi la o oră deja trecută este respins
+PASS  Azi la 21:00 (în viitor) este acceptat
+PASS  Primul Tab: link „Sari la conținut” vizibil
+PASS  Ordinea Tab: nav → hero → meniu → degustare → seara → formular  — #top | #foc | #meniu | #degustare | #spatiu | #contact | #rezervare | #rezervare | #meniu | note-btn | note-btn | note-btn | #rezervare | pairing-switch | clock | clock-cta | f-name | f-email | f-date | f-date | f-date | f-date | INPUT | INPUT | #meniu | btn btn-fire btn-wide | #rezervare | #top | BODY | #continut | #top | #foc | #meniu | #degustare | #spatiu | #contact | #rezervare | #rezervare | #meniu | note-btn
+PASS  Formular complet doar din tastatură → confirmare  — date=2026-10-10, ora=19:30
+PASS  Zero erori runtime (tastatură)  — []
+PASS  Mobil: toggle deschide meniul (aria-expanded)
+PASS  Mobil: Escape închide și readuce focusul
+PASS  Mobil: link din meniu navighează și închide meniul
+PASS  Mobil: sarcina umană (program → preparat → cerere) completă
+PASS  Zero erori runtime (mobil)  — []
+PASS  Responsive 1440×900: overflow orizontal 0  — scroll Δ=0; elemente peste margine: []
+PASS  Responsive 1440×900: CTA rezervare vizibil la încărcare
+PASS  Responsive 1440×900: fără text tăiat  — []
+PASS  Responsive 1024×768: overflow orizontal 0  — scroll Δ=0; elemente peste margine: []
+PASS  Responsive 1024×768: CTA rezervare vizibil la încărcare
+PASS  Responsive 1024×768: fără text tăiat  — []
+PASS  Responsive 390×844: overflow orizontal 0  — scroll Δ=0; elemente peste margine: []
+PASS  Responsive 390×844: CTA rezervare vizibil la încărcare
+PASS  Responsive 390×844: fără text tăiat  — []
+PASS  Responsive 320×568: overflow orizontal 0  — scroll Δ=0; elemente peste margine: []
+PASS  Responsive 320×568: CTA rezervare vizibil la încărcare
+PASS  Responsive 320×568: fără text tăiat  — []
+PASS  Fără JS: conținutul cheie este vizibil
+PASS  Fără JS: submit nu trimite nimic (method=dialog)  — http://127.0.0.1:4174/
+
+54/54 PASS

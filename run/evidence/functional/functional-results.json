@@ -1,0 +1,278 @@
+{
+  "when": "2026-10-03T02:25:05.620Z",
+  "browser": "Chromium 141.0.7390.37 headless (playwright-core 1.56.1)",
+  "passed": 54,
+  "failed": 0,
+  "results": [
+    {
+      "name": "Ancore: fiecare link intern are țintă",
+      "ok": true,
+      "detail": "16 linkuri, lipsă: []"
+    },
+    {
+      "name": "Fără linkuri externe / moarte",
+      "ok": true,
+      "detail": "[]"
+    },
+    {
+      "name": "Navigare → #foc",
+      "ok": true,
+      "detail": "top=63px"
+    },
+    {
+      "name": "Navigare → #meniu",
+      "ok": true,
+      "detail": "top=63px"
+    },
+    {
+      "name": "Navigare → #degustare",
+      "ok": true,
+      "detail": "top=63px"
+    },
+    {
+      "name": "Navigare → #spatiu",
+      "ok": true,
+      "detail": "top=63px"
+    },
+    {
+      "name": "Navigare → #contact",
+      "ok": true,
+      "detail": "top=151px (capăt de pagină; secțiunea e integral vizibilă)"
+    },
+    {
+      "name": "CTA hero „Cere o masă” → #rezervare",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "CTA hero „Vezi meniul” → #meniu",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "Meniu: 2 preparate notate (aria-pressed)",
+      "ok": true,
+      "detail": "2 preparate notate: Păstrăv, unt brun și praz · Pară, miere și fum."
+    },
+    {
+      "name": "Meniu: de-notare funcționează",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "Preparatul notat apare în formular",
+      "ok": true,
+      "detail": "Păstrăv, unt brun și praz"
+    },
+    {
+      "name": "Degustare: switch asociere (aria-checked, status)",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "Seara: tastatura mută ora (19:30) și CTA",
+      "ok": true,
+      "detail": "19:30 / Cere o masă la 19:30"
+    },
+    {
+      "name": "Seara: CTA preselectează ora 19:30 în formular",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "Formular gol: rezumat erori focusat",
+      "ok": true,
+      "detail": "4 erori (ora era preselectată), focus=form-errors"
+    },
+    {
+      "name": "Formular: aria-invalid pe câmpuri",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "Email incomplet respins",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "Luni respinsă (închis)",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "Dată trecută respinsă",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "Cerere validă → confirmare locală vizibilă și focusată",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "Confirmare: rezumat corect",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "Mențiune demonstrativă lângă confirmare",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "Zero requesturi de rețea la validare/trimitere",
+      "ok": true,
+      "detail": "[]"
+    },
+    {
+      "name": "Zero persistență (localStorage/sessionStorage/cookie/IndexedDB)",
+      "ok": true,
+      "detail": "{\"ls\":0,\"ss\":0,\"cookie\":\"\",\"idb\":0}"
+    },
+    {
+      "name": "URL neschimbat (fără query cu date)",
+      "ok": true,
+      "detail": "http://127.0.0.1:4174/#rezervare"
+    },
+    {
+      "name": "„Completează altă cerere” resetează formularul",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "Toate resursele sunt locale",
+      "ok": true,
+      "detail": "[\"127.0.0.1:4174\"]"
+    },
+    {
+      "name": "Zero erori runtime / resurse lipsă (desktop)",
+      "ok": true,
+      "detail": "[]"
+    },
+    {
+      "name": "Azi la o oră deja trecută este respins",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "Azi la 21:00 (în viitor) este acceptat",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "Primul Tab: link „Sari la conținut” vizibil",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "Ordinea Tab: nav → hero → meniu → degustare → seara → formular",
+      "ok": true,
+      "detail": "#top | #foc | #meniu | #degustare | #spatiu | #contact | #rezervare | #rezervare | #meniu | note-btn | note-btn | note-btn | #rezervare | pairing-switch | clock | clock-cta | f-name | f-email | f-date | f-date | f-date | f-date | INPUT | INPUT | #meniu | btn btn-fire btn-wide | #rezervare | #top | BODY | #continut | #top | #foc | #meniu | #degustare | #spatiu | #contact | #rezervare | #rezervare | #meniu | note-btn"
+    },
+    {
+      "name": "Formular complet doar din tastatură → confirmare",
+      "ok": true,
+      "detail": "date=2026-10-10, ora=19:30"
+    },
+    {
+      "name": "Zero erori runtime (tastatură)",
+      "ok": true,
+      "detail": "[]"
+    },
+    {
+      "name": "Mobil: toggle deschide meniul (aria-expanded)",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "Mobil: Escape închide și readuce focusul",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "Mobil: link din meniu navighează și închide meniul",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "Mobil: sarcina umană (program → preparat → cerere) completă",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "Zero erori runtime (mobil)",
+      "ok": true,
+      "detail": "[]"
+    },
+    {
+      "name": "Responsive 1440×900: overflow orizontal 0",
+      "ok": true,
+      "detail": "scroll Δ=0; elemente peste margine: []"
+    },
+    {
+      "name": "Responsive 1440×900: CTA rezervare vizibil la încărcare",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "Responsive 1440×900: fără text tăiat",
+      "ok": true,
+      "detail": "[]"
+    },
+    {
+      "name": "Responsive 1024×768: overflow orizontal 0",
+      "ok": true,
+      "detail": "scroll Δ=0; elemente peste margine: []"
+    },
+    {
+      "name": "Responsive 1024×768: CTA rezervare vizibil la încărcare",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "Responsive 1024×768: fără text tăiat",
+      "ok": true,
+      "detail": "[]"
+    },
+    {
+      "name": "Responsive 390×844: overflow orizontal 0",
+      "ok": true,
+      "detail": "scroll Δ=0; elemente peste margine: []"
+    },
+    {
+      "name": "Responsive 390×844: CTA rezervare vizibil la încărcare",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "Responsive 390×844: fără text tăiat",
+      "ok": true,
+      "detail": "[]"
+    },
+    {
+      "name": "Responsive 320×568: overflow orizontal 0",
+      "ok": true,
+      "detail": "scroll Δ=0; elemente peste margine: []"
+    },
+    {
+      "name": "Responsive 320×568: CTA rezervare vizibil la încărcare",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "Responsive 320×568: fără text tăiat",
+      "ok": true,
+      "detail": "[]"
+    },
+    {
+      "name": "Fără JS: conținutul cheie este vizibil",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "Fără JS: submit nu trimite nimic (method=dialog)",
+      "ok": true,
+      "detail": "http://127.0.0.1:4174/"
+    }
+  ]
+}

@@ -1,0 +1,48 @@
+{
+  "rows": [
+    {
+      "run": 1,
+      "LCP_ms": 997,
+      "CLS": 0,
+      "TBT_ms": 0,
+      "FCP_ms": 977,
+      "perf": 1,
+      "a11y": 1,
+      "bp": 1,
+      "lh": "13.5.0",
+      "ua": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/141.0.0.0 Safari/537.36"
+    },
+    {
+      "run": 2,
+      "LCP_ms": 929,
+      "CLS": 0,
+      "TBT_ms": 0,
+      "FCP_ms": 907,
+      "perf": 1,
+      "a11y": 1,
+      "bp": 1,
+      "lh": "13.5.0",
+      "ua": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/141.0.0.0 Safari/537.36"
+    },
+    {
+      "run": 3,
+      "LCP_ms": 964,
+      "CLS": 0,
+      "TBT_ms": 0,
+      "FCP_ms": 946,
+      "perf": 1,
+      "a11y": 1,
+      "bp": 1,
+      "lh": "13.5.0",
+      "ua": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/141.0.0.0 Safari/537.36"
+    }
+  ],
+  "median": {
+    "LCP_ms": 964,
+    "CLS": 0,
+    "TBT_ms": 0,
+    "FCP_ms": 946,
+    "perf": 1,
+    "a11y": 1
+  }
+}

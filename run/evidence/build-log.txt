@@ -1,0 +1,36 @@
+# B1 — instalare și build curate (copie fără node_modules/dist)
+date: 2026-10-03T02:26:29Z
+node v22.22.0 / npm 10.9.4
+$ npm ci
+
+added 17 packages, and audited 18 packages in 844ms
+
+9 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
+exit: 0
+$ npm run build
+
+> fir-de-foc@1.0.0 build
+> vite build
+
+vite v8.3.2 building client environment for production...
+transforming...
+✓ 5 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                 26.33 kB │ gzip: 6.92 kB
+dist/assets/index-B24y-_s8.css  31.01 kB │ gzip: 8.09 kB
+dist/assets/index-EFAlmcv1.js   11.13 kB │ gzip: 4.69 kB
+
+✓ built in 265ms
+exit: 0
+# comparație dist curat vs run/site/dist (sha256)
+3c1c8e0f4e5b5ecc81b0bcca1da498a1b05526815ff57cb99f405d4fcb5acdc5  ./assets/index-B24y-_s8.css
+414b25aefb13fe3014aace7fcbc3ab204977c7e0976d78b489855fe592570d28  ./assets/index-EFAlmcv1.js
+40bfc217dd1af9676bfe899f256de7520cc0068b81fb95837ec7d125d71106f2  ./index.html
+---
+3c1c8e0f4e5b5ecc81b0bcca1da498a1b05526815ff57cb99f405d4fcb5acdc5  ./assets/index-B24y-_s8.css
+414b25aefb13fe3014aace7fcbc3ab204977c7e0976d78b489855fe592570d28  ./assets/index-EFAlmcv1.js
+40bfc217dd1af9676bfe899f256de7520cc0068b81fb95837ec7d125d71106f2  ./index.html

@@ -1,0 +1,82 @@
+{
+  "schema": 1,
+  "package": "ALFA_Claude_Code_55_Opus",
+  "source_mode": "REFERENCE_ONLY",
+  "files": [
+    {
+      "path": "inputs/alfa-originals/README.md",
+      "sha256": "77d2827ad93aaf1ac0911f6fd02b2e931b8fab4699d8b2a51990c4e21e45cd9f",
+      "bytes": 373
+    },
+    {
+      "path": "inputs/run-configuration.md",
+      "sha256": "90c26b04c338bc46fc0fea7b576710b11907887831bc4eaaa0e972812ea79f4c",
+      "bytes": 506
+    },
+    {
+      "path": "MAIN_PROMPT.md",
+      "sha256": "cc459122230d9777e03a6c4ba1303aee39c6528ed026c50a554a9fdcedf84776",
+      "bytes": 27333
+    },
+    {
+      "path": "README.md",
+      "sha256": "3bee2f6e4c3ac3a8603280204f0af3e7e751497fa0b97317f6bee1b5e16973c9",
+      "bytes": 2130
+    },
+    {
+      "path": "shared/01_PREMIUM_SYNTHESIS_V01.md",
+      "sha256": "6aa3fe8ab02cb70d88827cb635597c92de48ecac04b3f8243d807873b592254f",
+      "bytes": 3215
+    },
+    {
+      "path": "shared/02_BRIEF_TEST_CONTRACT.md",
+      "sha256": "ef101810ee7977dee2c8cc46f222c0d57352aa92287bef824d84f049f53cb735",
+      "bytes": 5184
+    },
+    {
+      "path": "shared/03_ISOLATION_AND_NON_CONTAMINATION.md",
+      "sha256": "5f5b8366eb7b61d547bb77ee0aa1a4ae652cd7f0cb394462fd6b5f2fc9a037df",
+      "bytes": 2707
+    },
+    {
+      "path": "shared/04_BUILD_GATE.md",
+      "sha256": "8d89322169bdc800de72e79b72a3dee6a6bdc58318f04a2988d32835aba9d5c1",
+      "bytes": 2443
+    },
+    {
+      "path": "shared/05_HUMAN_REVIEW.md",
+      "sha256": "6739a959f73ff04a0c3968858a64af1373b2872975ccf3e440bdd7e27688d9f3",
+      "bytes": 2529
+    },
+    {
+      "path": "shared/06_FAILURE_MEMORY.md",
+      "sha256": "5b5f1c6b869fe0629f48ef7a6dfb7fa9cacb3befa6843c38052388917ea6c39e",
+      "bytes": 1483
+    },
+    {
+      "path": "shared/07_BLUEPRINT_TEMPLATE.md",
+      "sha256": "c3ef5dbe8158ceb61c60b88a7ecab455e5f46155de6ed114ef3a3db93f1d37f8",
+      "bytes": 1152
+    },
+    {
+      "path": "shared/08_FINAL_REPORT_TEMPLATE.md",
+      "sha256": "269e1590706056109ffc1d3db8afface4c86a953c2063611482e052d1a7b7cea",
+      "bytes": 1611
+    },
+    {
+      "path": "shared/09_SOURCE_PROVENANCE_AND_INPUT_FREEZE.md",
+      "sha256": "9f67282676c3bae9c08c300a94f7bea571c5e6d704ff8adae28c8fc68af42ddc",
+      "bytes": 2149
+    },
+    {
+      "path": "shared/10_ASSET_POLICY.md",
+      "sha256": "512ee8891751ced283f223677fa0aabcac0ecb5c9bd84c2d72f75896b4e91ffa",
+      "bytes": 977
+    },
+    {
+      "path": "Verify-Package.ps1",
+      "sha256": "201cee983d2dc4a7f247f1972f12911d549a22c9dbfb6014bf271bfdbb608c22",
+      "bytes": 660
+    }
+  ]
+}
