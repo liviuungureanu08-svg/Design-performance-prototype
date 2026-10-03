@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>TIDELINE — Coastal intelligence for the organizations that manage it</title>
+<meta name="description" content="TIDELINE turns distributed sensor, bathymetric and field observations into decision-grade coastal intelligence for ports, coastal engineers and infrastructure teams." />
+<link rel="icon" href="data:," />
+<link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<div class="coast-stage" aria-hidden="true">
+  <canvas id="coast-canvas"></canvas>
+</div>
+
+<header class="site-header">
+  <div class="header-row">
+    <a class="brand" href="#top">
+      <span class="brand-mark" aria-hidden="true">≈</span>
+      <span class="brand-name">TIDELINE</span>
+    </a>
+    <button class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="primaryNav">
+      <span></span><span></span><span></span>
+      <span class="sr-only">Menu</span>
+    </button>
+    <nav class="primary-nav" id="primaryNav" aria-label="Primary">
+      <a href="#system">System</a>
+      <a href="#project">Project</a>
+      <a href="#about">About</a>
+      <a href="#principle">Principle</a>
+      <a href="#demo" class="nav-cta">Demo</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+
+  <section id="top" class="panel panel-hero" data-stage="0" aria-label="Introduction">
+    <div class="panel-inner">
+      <p class="eyebrow">Coastal intelligence</p>
+      <h1>See the coast before it becomes a problem.</h1>
+      <p class="lede">TIDELINE combines distributed sensors, bathymetric observation, shoreline survey and predictive modelling into one continuous read of a moving coastline — so your team acts on change, not on a single photograph of it.</p>
+      <div class="cta-row">
+        <a class="btn btn-primary" href="#demo">Request a technical demo</a>
+        <a class="btn btn-ghost" href="#system">Explore the system</a>
+      </div>
+    </div>
+    <p class="stage-caption" aria-hidden="true"><span>COASTLINE</span></p>
+  </section>
+
+  <section id="problem" class="panel panel-problem" data-stage="1" aria-label="The problem">
+    <div class="panel-inner">
+      <p class="eyebrow">The problem</p>
+      <h2>A shoreline is not a snapshot.</h2>
+      <p class="lede">Erosion, sediment movement and shifting water conditions change the geometry of a coastline — and what it exposes — continuously. A single survey, a single flyover, a single report is a still frame of a system that never stops moving. Decisions built on isolated observations inherit their blind spots.</p>
+      <ul class="fact-list">
+        <li>Shoreline geometry shifts between surveys, not only during them.</li>
+        <li>Isolated readings can't distinguish normal variation from a developing trend.</li>
+        <li>Infrastructure exposure changes with the coast it stands on.</li>
+      </ul>
+    </div>
+    <p class="stage-caption" aria-hidden="true"><span>OBSERVATION</span></p>
+  </section>
+
+  <section id="system" class="panel panel-system" data-stage="2" aria-label="System">
+    <div class="panel-inner">
+      <p class="eyebrow">System</p>
+      <h2>Observe. Interpret. Act.</h2>
+      <p class="lede">TIDELINE's pipeline turns raw physical readings into operational understanding — the same corridor, read continuously rather than re-surveyed from scratch each time.</p>
+
+      <ol class="pipeline" aria-label="From field observation to decision">
+        <li><span class="pipeline-step">Field</span></li>
+        <li><span class="pipeline-step">Measurements</span></li>
+        <li><span class="pipeline-step">Interpretation</span></li>
+        <li><span class="pipeline-step">Decision</span></li>
+      </ol>
+
+      <div class="system-grid">
+        <article>
+          <h3>Observe</h3>
+          <p>Distributed sensors, bathymetric passes and field survey feed one corridor-level record instead of disconnected site visits.</p>
+        </article>
+        <article>
+          <h3>Interpret</h3>
+          <p>Readings are reconciled against prior observation and predictive modelling, so a single point is read in the context of a trend.</p>
+        </article>
+        <article>
+          <h3>Act</h3>
+          <p>Interpretation resolves into a specific, boundable question: where to inspect, reinforce or re-survey — and where not to.</p>
+        </article>
+      </div>
+
+    </div>
+    <p class="stage-caption" aria-hidden="true"><span>UNDERSTANDING</span></p>
+  </section>
+
+  <section id="project" class="panel panel-project" data-stage="3" aria-label="Project">
+    <div class="panel-inner">
+      <p class="eyebrow">Project · Pilot 07</p>
+      <h2>North Breakwater, Pilot 07</h2>
+      <p class="lede">A fictional North Atlantic commercial harbour used one continuous TIDELINE corridor instead of a rotating inspection schedule.</p>
+
+      <dl class="stat-grid">
+        <div class="stat"><dt>Duration</dt><dd><span class="stat-value">18</span><span class="stat-unit">months</span></dd></div>
+        <div class="stat"><dt>Monitoring corridor</dt><dd><span class="stat-value">4.2</span><span class="stat-unit">km</span></dd></div>
+        <div class="stat"><dt>Sensor &amp; survey inputs</dt><dd><span class="stat-value">31</span><span class="stat-unit">inputs</span></dd></div>
+        <div class="stat"><dt>Unnecessary inspection area removed</dt><dd><span class="stat-value">27</span><span class="stat-unit">%</span></dd></div>
+      </dl>
+      <p class="fine-print">Fictional pilot data, prepared for this prototype only. Not a claim of real-world deployment or outcomes.</p>
+      <p class="sensor-hint">Hover or focus a marker on the coastline to read a live sensor from this corridor.</p>
+    </div>
+    <p class="stage-caption" aria-hidden="true"><span>DECISION</span></p>
+  </section>
+
+  <section id="principle" class="panel panel-principle" data-stage="3" aria-label="Operating principle">
+    <div class="panel-inner">
+      <p class="eyebrow">Operating principle</p>
+      <h2>More data is not the product.<br />Better decisions are.</h2>
+      <p class="lede">Every sensor TIDELINE adds has to earn its place in a decision, not just in a dashboard. We build toward the smallest corridor of attention that answers the question a team actually has.</p>
+    </div>
+  </section>
+
+  <section id="about" class="panel panel-about panel-calm" aria-label="About">
+    <div class="panel-inner">
+      <p class="eyebrow">About</p>
+      <h2>Built for people who are accountable for a coastline.</h2>
+      <p class="lede">TIDELINE is built for ports, coastal engineers and infrastructure teams who need to justify where attention and budget go — not for a general audience scrolling past a dashboard. The system is deliberately boring where it should be: traceable inputs, legible interpretation, and a record you can defend in a planning meeting.</p>
+    </div>
+  </section>
+
+  <section id="demo" class="panel panel-demo panel-calm" aria-label="Request a technical demo">
+    <div class="panel-inner">
+      <p class="eyebrow">Demo</p>
+      <h2>Request a technical demo</h2>
+      <p class="lede">Tell us about the coastline you're responsible for. A technical lead will walk through the system against your own corridor.</p>
+
+      <form id="demoForm" class="demo-form" novalidate>
+        <div class="field">
+          <label for="fName">Name</label>
+          <input id="fName" name="name" type="text" autocomplete="name" required />
+        </div>
+        <div class="field">
+          <label for="fOrg">Organization</label>
+          <input id="fOrg" name="organization" type="text" autocomplete="organization" required />
+        </div>
+        <div class="field">
+          <label for="fEmail">Email</label>
+          <input id="fEmail" name="email" type="email" autocomplete="email" required />
+        </div>
+        <div class="field">
+          <label for="fProject">Project / coastline</label>
+          <input id="fProject" name="project" type="text" required />
+        </div>
+        <div class="field field-wide">
+          <label for="fGoal">What are you trying to understand?</label>
+          <textarea id="fGoal" name="goal" rows="4" required></textarea>
+        </div>
+        <div class="field field-wide form-actions">
+          <button class="btn btn-primary" type="submit">Request demo</button>
+          <p class="form-note" id="formError" role="alert" hidden>Please complete every field with a valid email address.</p>
+        </div>
+      </form>
+
+      <div class="demo-confirm" id="demoConfirm" role="status" aria-live="polite" hidden tabindex="-1">
+        <h3>Request received.</h3>
+        <p>A TIDELINE technical lead will reach out to <span id="confirmEmail"></span> about <span id="confirmProject"></span> within one business day.</p>
+        <button class="btn btn-ghost" id="demoReset" type="button">Submit another request</button>
+      </div>
+    </div>
+  </section>
+
+  <footer class="site-footer">
+    <p>TIDELINE — coastal intelligence prototype. All project data on this page is fictional.</p>
+  </footer>
+
+</main>
+
+<div id="sensorTooltip" class="sensor-tooltip" role="status" aria-live="polite" hidden></div>
+
+<script src="js/coastline.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
