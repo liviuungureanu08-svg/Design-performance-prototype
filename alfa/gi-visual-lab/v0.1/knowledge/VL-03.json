@@ -1,0 +1,80 @@
+{
+  "id": "VL-03",
+  "rule": "Balance responsive pointer location with smooth physical force; test both rawness and lag.",
+  "why": "Reasonable smoothing values can feel smudged or inconsistent with a control's state.",
+  "mechanism": "Immediate acknowledgement with spatially coupled response and controlled force/settle.",
+  "whenToUse": [
+    "Pointer-driven environmental response or direct manipulation."
+  ],
+  "whenNotToUse": [
+    "Touch/no-pointer paths; essential actions must not depend on pointer precision."
+  ],
+  "parameters": [
+    "Position, force, activation and state timing need independent contextual tuning.",
+    "No universal millisecond value is encoded."
+  ],
+  "dependencies": [
+    "Pointer entry/leave/blur handling and keyboard/touch alternatives."
+  ],
+  "implementationPattern": [
+    "Keep cursor acknowledgement immediate.",
+    "Separate location response from force activation if their jobs differ.",
+    "Initialize inactive-to-active location at entry; release pressure on leave/blur.",
+    "Use elapsed time rather than frame-count damping."
+  ],
+  "goodExample": {
+    "claim": "LAMELLA Human Review described natural, responsive pointer and useful click response.",
+    "source": "docs/ALFA_EXPERIMENT_EVIDENCE_2026-10-03.md §10"
+  },
+  "antiExample": {
+    "claim": "Original VELORUM pointer could feel smudged in intense regions.",
+    "source": "docs/ALFA_EXPERIMENT_EVIDENCE_2026-10-03.md §8"
+  },
+  "failureModes": [
+    "pointer-raw",
+    "pointer-lag"
+  ],
+  "tests": [
+    "Slow/fast travel, sudden reversal, stop, leave/re-enter and dense graphical regions.",
+    "Compare location and force after state change; test reduced motion and touch alternative."
+  ],
+  "repairStrategy": [
+    "For lag, shorten location response and reduce trails before shrinking semantic force.",
+    "For rawness, add minimal time-correct response or controlled force onset.",
+    "Re-test human feel after tuning; an error measurement cannot certify UX."
+  ],
+  "preserveInvariants": [
+    "Responsive acknowledgement",
+    "Spatial coupling",
+    "Named state differentiation"
+  ],
+  "cost": "A few state values; pointer effects themselves may have renderer cost.",
+  "version": "0.1.0",
+  "status": "CANDIDATE / NOT CORE / TO VALIDATE",
+  "provenance": [
+    {
+      "claim": "Candidate operationalization of existing human/technical experiment evidence; transfer unvalidated.",
+      "source": "docs/ALFA_EXPERIMENT_EVIDENCE_2026-10-03.md"
+    },
+    {
+      "claim": "HEG/TEG specification and Human Authority boundary.",
+      "source": "docs/ALFA_HUMAN_EXPERIENCE_GOVERNOR_v0.1.md"
+    }
+  ],
+  "transferability": "Observed context only; weaker-model and cross-domain transfer TO VALIDATE.",
+  "routing": {
+    "features": [
+      "pointer"
+    ],
+    "failures": [
+      "pointer-raw",
+      "pointer-lag"
+    ],
+    "phases": [
+      "activation",
+      "generation",
+      "critique",
+      "repair"
+    ]
+  }
+}

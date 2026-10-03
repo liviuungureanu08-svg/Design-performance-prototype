@@ -1,0 +1,86 @@
+{
+  "id": "VL-04",
+  "rule": "Test transition grammar under aggressive input for flashing and skipped perceptual states.",
+  "why": "Repeated light fade/scene fade handoffs can look controlled slowly and flash under scrollbar dragging.",
+  "mechanism": "Continuous information and luminance handoff across scene boundaries.",
+  "whenToUse": [
+    "Multi-scene fades, large luminance changes or meaningful scroll transformations."
+  ],
+  "whenNotToUse": [
+    "Do not suppress user input to hide an unsafe transition; static pages need no scene governor."
+  ],
+  "parameters": [
+    "Handoff overlap, luminance contrast, event repetition and state-path continuity."
+  ],
+  "dependencies": [
+    "Actual rendered sequences and fast-input controls."
+  ],
+  "implementationPattern": [
+    "Review a stable base layer through handoffs.",
+    "Coordinate outgoing and incoming light/state sources.",
+    "Avoid repeating full-field fade pulses when several boundaries are crossed at once."
+  ],
+  "goodExample": {
+    "claim": "VELORUM refinement preserved forward/reverse peak state in numerical checks.",
+    "source": "docs/ALFA_EXPERIMENT_EVIDENCE_2026-10-03.md §9"
+  },
+  "antiExample": {
+    "claim": "LAMELLA repeated light fades flashed under aggressive scrollbar dragging in Human Review.",
+    "source": "docs/ALFA_EXPERIMENT_EVIDENCE_2026-10-03.md §10"
+  },
+  "failureModes": [
+    "flashing",
+    "state-skipping"
+  ],
+  "tests": [
+    "Slow",
+    "Normal",
+    "Fast wheel",
+    "Aggressive scrollbar drag",
+    "Reverse",
+    "Pause mid-transition",
+    "Resume",
+    "Direction change"
+  ],
+  "repairStrategy": [
+    "Use a shared continuous handoff or stable base layer.",
+    "Reduce repeated luminance pulses while preserving the intended signature contrast.",
+    "Review the worst boundary frame and reduced-motion handoff."
+  ],
+  "preserveInvariants": [
+    "Continuous perceptual information",
+    "Orientation",
+    "Signature peak contrast",
+    "Native input"
+  ],
+  "cost": "Sequence capture and boundary review; technique dependent rendering cost.",
+  "version": "0.1.0",
+  "status": "CANDIDATE / NOT CORE / TO VALIDATE",
+  "provenance": [
+    {
+      "claim": "Candidate operationalization of existing human/technical experiment evidence; transfer unvalidated.",
+      "source": "docs/ALFA_EXPERIMENT_EVIDENCE_2026-10-03.md"
+    },
+    {
+      "claim": "HEG/TEG specification and Human Authority boundary.",
+      "source": "docs/ALFA_HUMAN_EXPERIENCE_GOVERNOR_v0.1.md"
+    }
+  ],
+  "transferability": "Observed context only; weaker-model and cross-domain transfer TO VALIDATE.",
+  "routing": {
+    "features": [
+      "scroll",
+      "transformation"
+    ],
+    "failures": [
+      "flashing",
+      "state-skipping"
+    ],
+    "phases": [
+      "activation",
+      "generation",
+      "critique",
+      "repair"
+    ]
+  }
+}

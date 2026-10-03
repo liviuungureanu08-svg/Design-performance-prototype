@@ -1,0 +1,83 @@
+{
+  "version": "0.1.0",
+  "patch": 0,
+  "status": "CANDIDATE / NOT CORE / TO VALIDATE",
+  "humanDimensions": [
+    "firstReaction",
+    "premium",
+    "wow",
+    "customVsTemplate",
+    "richness",
+    "control",
+    "meaningfulEffects",
+    "memorability",
+    "wouldPay",
+    "slowScroll",
+    "fastScroll",
+    "pointer",
+    "transitionQuality",
+    "readability",
+    "reverse",
+    "perceptualFrameDrop",
+    "finishedProduct",
+    "uxMotionQuality"
+  ],
+  "authority": [
+    "Human Authority owns Premium, WOW, Would Pay and UX Motion Quality. Leave results pending until explicit human input.",
+    "Technical FPS, CPU cost and callbacks cannot certify perceptual continuity.",
+    "Model-native capability, process compliance, artifact outcomes and ALFA contribution require separate evidence."
+  ],
+  "phases": {
+    "frame": [
+      "Extract known facts with sources, constraints and unknowns. Never invent Project Truth.",
+      "If a missing fact blocks the brief, stop factual commitment; otherwise expose the uncertainty."
+    ],
+    "promise": [
+      "Write what the visitor should feel, understand and be able to do. Ground the promise in supplied facts.",
+      "Treat premium as a contextual experience goal; do not choose a style from that word."
+    ],
+    "ambition": [
+      "Explore before criticism. Retain model-native alternatives.",
+      "Propose structurally distinct directions by changing agency, mechanism, representation or temporal driver.",
+      "Protect useful amplitude. More effects does not mean better quality; quiet approaches remain eligible."
+    ],
+    "search": [
+      "Record concept families and the structural difference between them. Palette swaps alone are insufficient.",
+      "Run generation and critique in separate passes. Reframe a shared premise before polishing several similar ideas."
+    ],
+    "signature": [
+      "Choose a project-specific signature system connecting content, interaction, composition and rhythm.",
+      "Apply Logo Swap, Industry Swap, Effect Swap and Remove Asset tests; record reservations.",
+      "Require relevance, not a spectacular hero for every domain."
+    ],
+    "activation": [
+      "Choose only knowledge that resolves current uncertainty. Record why each unit is needed.",
+      "Keep rejected/model-native alternatives observable. Treat implementation patterns as replaceable."
+    ],
+    "generation": [
+      "Build only the minimum artifact capable of exposing the important perceptual claim.",
+      "Keep document controls native and responsive. Preserve readable meaning in reduced/static alternatives.",
+      "Use the selected procedural units. Record implementation decisions and their provenance."
+    ],
+    "critique": [
+      "Inspect still endpoints, intermediate states and worst frames using actual rendering.",
+      "Test slow, normal, fast wheel, aggressive scrollbar drag, reverse, pause/resume, direction changes and resize where relevant.",
+      "Distinguish technical evidence from perceptual observations and Human Verdict."
+    ],
+    "repair": [
+      "Capture preserve invariants before editing. Diagnose a concrete reproduced failure.",
+      "Verify both DEFECT REDUCED and VALUE PRESERVED. Restore meaningful agency and signature amplitude if smoothing weakens them.",
+      "Record before/after decision, evidence and unresolved risks; do not repeat low-information polish."
+    ],
+    "human-review": [
+      "Freeze the artifact and pre-review prediction before receiving human feedback.",
+      "Present the experience before rationale, model name or framework claims. Record evaluator, device, input, order and prior knowledge.",
+      "Keep each evaluator's actual verdict and disagreement; do not average into a fake premium score."
+    ],
+    "evidence": [
+      "Record claim, evidence type, authority, source, scope and limitations.",
+      "Record unchanged decisions and negative contribution as well as successes.",
+      "Stop when the next decision needs Human Authority or a new matched experiment. No automatic learning or Core promotion."
+    ]
+  }
+}

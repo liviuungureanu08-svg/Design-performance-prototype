@@ -1,0 +1,10 @@
+{
+  "observations": [
+    {
+      "failureId": "flashing",
+      "description": "Synthetic example only: adjacent states flash on a large input change.",
+      "scenario": "Aggressive scrollbar drag followed by reversal.",
+      "source": "Synthetic fixture; actual render observation required in a real run."
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "strengths": [
+    "Run structure may remain isolated."
+  ],
+  "risks": [
+    "No actual model or rendered site was evaluated."
+  ],
+  "expectedFailures": [
+    "Cannot assess Human experience quality from plumbing."
+  ],
+  "confidence": "NOT EVALUABLE",
+  "uncertainty": "Synthetic architecture fixture only.",
+  "activeKnowledgeIds": [
+    "VL-01"
+  ]
+}

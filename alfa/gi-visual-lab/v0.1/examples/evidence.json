@@ -1,0 +1,15 @@
+{
+  "id": "plumbing-evidence",
+  "eventId": "plumbing-decision",
+  "label": "TECHNICAL EVIDENCE",
+  "authority": "TEST",
+  "claim": "Isolated record creation and verification succeeded for this synthetic fixture only.",
+  "source": "node --test test/*.test.mjs; independently rerun for actual verification.",
+  "scope": "Architecture plumbing; not ALFA performance, contribution or Human quality.",
+  "limitations": [
+    "No model invoked",
+    "No rendered interaction",
+    "No Human Review"
+  ],
+  "contribution": "NOT EVALUATED"
+}

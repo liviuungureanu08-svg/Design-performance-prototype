@@ -1,0 +1,86 @@
+{
+  "id": "VL-01",
+  "rule": "Separate native document input, environment target and continuously evaluated visual state when intermediate states carry meaning.",
+  "why": "Filtering an endpoint cannot recover a signature path that raw input skipped.",
+  "mechanism": "User input → intent/velocity → environment target → governed travel → visual state → settle.",
+  "whenToUse": [
+    "Scroll-controlled or state-controlled environments with meaningful intermediate states."
+  ],
+  "whenNotToUse": [
+    "Static pages or simple content transitions whose intermediate states carry no meaning."
+  ],
+  "parameters": [
+    "Travel speed, acceleration, response horizon and settle are experiment parameters.",
+    "Coordinate copy, geometry and telemetry deliberately; record intentional offsets."
+  ],
+  "dependencies": [
+    "A mapping from input to target and an evaluable intermediate path.",
+    "Reduced-motion alternative preserving semantic states."
+  ],
+  "implementationPattern": [
+    "Keep raw scroll available to document controls.",
+    "Advance a separate environment travel state per elapsed time; evaluate all coupled world parameters from it.",
+    "On restored scroll initialize at the target; for reduced motion use direct intended still states.",
+    "Do not independently smooth a non-monotonic signature envelope from endpoint samples."
+  ],
+  "goodExample": {
+    "claim": "VELORUM refinement retained the burst peak under fast input through governed path evaluation.",
+    "source": "docs/ALFA_EXPERIMENT_EVIDENCE_2026-10-03.md §9"
+  },
+  "antiExample": {
+    "claim": "Baseline VELORUM fast endpoint sweep skipped the intermediate rupture peak.",
+    "source": "VELORUM Copy/REFINEMENT_REPORT.md §2, as consolidated in evidence §9"
+  },
+  "failureModes": [
+    "state-skipping",
+    "timeline-mismatch",
+    "abrupt-settle"
+  ],
+  "tests": [
+    "Compare slow and endpoint-fast traversal; capture the same signature states.",
+    "Reverse mid-flight; pause and resume; jump across the whole document; reload at restored scroll.",
+    "Inspect document/environment disagreement as well as callback cadence."
+  ],
+  "repairStrategy": [
+    "Evaluate the meaningful path from governed travel; share semantic timing.",
+    "If catch-up hides the release behind later copy, repair handoff/reading windows without hijacking native scroll.",
+    "Add deliberate onset/settle only where it preserves agency."
+  ],
+  "preserveInvariants": [
+    "Native document control",
+    "Signature amplitude",
+    "Semantic state path",
+    "Readable copy"
+  ],
+  "cost": "Small state-evaluation cost; catch-up and coupling can increase complexity.",
+  "version": "0.1.0",
+  "status": "CANDIDATE / NOT CORE / TO VALIDATE",
+  "provenance": [
+    {
+      "claim": "Candidate operationalization of existing human/technical experiment evidence; transfer unvalidated.",
+      "source": "docs/ALFA_EXPERIMENT_EVIDENCE_2026-10-03.md"
+    },
+    {
+      "claim": "HEG/TEG specification and Human Authority boundary.",
+      "source": "docs/ALFA_HUMAN_EXPERIENCE_GOVERNOR_v0.1.md"
+    }
+  ],
+  "transferability": "Observed context only; weaker-model and cross-domain transfer TO VALIDATE.",
+  "routing": {
+    "features": [
+      "scroll",
+      "transformation"
+    ],
+    "failures": [
+      "state-skipping",
+      "timeline-mismatch",
+      "abrupt-settle"
+    ],
+    "phases": [
+      "activation",
+      "generation",
+      "critique",
+      "repair"
+    ]
+  }
+}

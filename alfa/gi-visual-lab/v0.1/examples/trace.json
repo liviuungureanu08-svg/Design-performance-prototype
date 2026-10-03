@@ -1,0 +1,14 @@
+{
+  "id": "plumbing-decision",
+  "mechanismId": "VL-01",
+  "origin": "ALFA KNOWLEDGE",
+  "why": "Synthetic fixture checks selected-unit trace linkage.",
+  "decisionBefore": "No isolated fixture artifact.",
+  "decisionAfter": "A text fixture describes native document versus governed environment.",
+  "failureTarget": "state-skipping (not observed in a rendered artifact)",
+  "valuePreserved": [
+    "Native document responsiveness"
+  ],
+  "outcome": "Schema/record plumbing only; no perceptual outcome measured.",
+  "evidenceRefs": []
+}

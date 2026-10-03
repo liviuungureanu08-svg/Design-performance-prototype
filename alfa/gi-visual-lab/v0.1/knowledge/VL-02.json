@@ -1,0 +1,78 @@
+{
+  "id": "VL-02",
+  "rule": "Classify motion by experiential function before removing activity.",
+  "why": "Reducing temporal competition can also remove the user's meaningful response.",
+  "mechanism": "Primary semantic/agency motion owns attention; secondary motion supports or releases it.",
+  "whenToUse": [
+    "Several simultaneous motion sources or an artifact undergoing noise reduction."
+  ],
+  "whenNotToUse": [
+    "Do not classify every lively behavior as a defect or freeze meaning-bearing motion."
+  ],
+  "parameters": [
+    "Role by state, amplitude, temporal priority, shared cause and motion budget."
+  ],
+  "dependencies": [
+    "An inventory of motion layers and their semantic function."
+  ],
+  "implementationPattern": [
+    "List trigger → response → meaning for each moving layer.",
+    "Mark signature, agency, content, atmospheric and redundant roles per state.",
+    "Change one competing layer at a time, then compare primary state responses."
+  ],
+  "goodExample": {
+    "claim": "INBOUND shared cause and motion budgets helped structure one causal input event.",
+    "source": "origin/ccr-86d3be6b-jy48id@8af73b3:experiments/vl-audit-01/FINAL_REPORT.md §4"
+  },
+  "antiExample": {
+    "claim": "VELORUM refinement became more controlled while Human Review found weaker meaningful state response.",
+    "source": "docs/ALFA_EXPERIMENT_EVIDENCE_2026-10-03.md §9"
+  },
+  "failureModes": [
+    "noise-competition",
+    "agency-loss",
+    "spectacle-loss"
+  ],
+  "tests": [
+    "Exercise each named control before/after repair.",
+    "Inspect primary action amid ambient activity, at rest and in dense regions."
+  ],
+  "repairStrategy": [
+    "Reduce arbitrary jitter/secondary oscillation first.",
+    "Restore meaningful control amplitude when repair weakens it.",
+    "NOISE REDUCTION MUST NOT DELETE MEANINGFUL MOTION."
+  ],
+  "preserveInvariants": [
+    "Agency feedback",
+    "Capability differentiation",
+    "Signature emotional purpose"
+  ],
+  "cost": "Requires before/after inspection; no extra renderer required.",
+  "version": "0.1.0",
+  "status": "CANDIDATE / NOT CORE / TO VALIDATE",
+  "provenance": [
+    {
+      "claim": "Candidate operationalization of existing human/technical experiment evidence; transfer unvalidated.",
+      "source": "docs/ALFA_EXPERIMENT_EVIDENCE_2026-10-03.md"
+    },
+    {
+      "claim": "HEG/TEG specification and Human Authority boundary.",
+      "source": "docs/ALFA_HUMAN_EXPERIENCE_GOVERNOR_v0.1.md"
+    }
+  ],
+  "transferability": "Observed context only; weaker-model and cross-domain transfer TO VALIDATE.",
+  "routing": {
+    "features": [
+      "motion"
+    ],
+    "failures": [
+      "noise-competition"
+    ],
+    "phases": [
+      "activation",
+      "generation",
+      "critique",
+      "repair"
+    ]
+  }
+}

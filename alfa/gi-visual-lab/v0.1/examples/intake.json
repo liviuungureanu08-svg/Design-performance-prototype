@@ -1,0 +1,64 @@
+{
+  "experimentId": "synthetic-plumbing",
+  "candidateVersion": "0.1.0",
+  "condition": "guided",
+  "brief": "Synthetic fixture: demonstrate a readable native-scroll information panel. This is plumbing only, not a premium-site brief.",
+  "projectTruth": {
+    "name": "Synthetic panel",
+    "audience": "Test operator",
+    "purpose": "Verify isolation and record formats",
+    "facts": [
+      {
+        "claim": "This input is a synthetic test fixture, not customer evidence.",
+        "source": "examples/intake.json"
+      }
+    ],
+    "constraints": [
+      "Do not use network or generate a production site."
+    ],
+    "unknowns": [
+      "No human experience quality has been assessed."
+    ],
+    "blocked": false
+  },
+  "experiencePromise": "The operator can find the test label and exercise an isolated run.",
+  "model": {
+    "name": "operator-selected-model",
+    "settings": {
+      "effort": "same-for-both-arms"
+    }
+  },
+  "permissions": {
+    "tools": [
+      "local-file-read",
+      "run-artifact-write"
+    ],
+    "assets": [
+      "synthetic-text-only"
+    ]
+  },
+  "budget": {
+    "minutes": 5,
+    "tokens": 1000
+  },
+  "evaluation": {
+    "device": "operator-declared device",
+    "viewport": "operator-declared viewport",
+    "browser": "operator-declared browser",
+    "task": "Read synthetic label; verify plumbing, not experience quality."
+  },
+  "phase": "generation",
+  "uncertainty": "Can the runner isolate relevant scroll/transition guidance without injecting it into baseline?",
+  "features": [
+    "scroll",
+    "transformation"
+  ],
+  "selectedMechanismIds": [],
+  "failureIds": [],
+  "maxMechanisms": 2,
+  "preserveInvariants": [
+    "Native document responsiveness",
+    "Readable synthetic label"
+  ],
+  "humanDecisions": []
+}

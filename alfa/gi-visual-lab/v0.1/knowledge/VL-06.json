@@ -1,0 +1,81 @@
+{
+  "id": "VL-06",
+  "rule": "Capture preserve invariants before repair; verify defect reduction and retained human value separately.",
+  "why": "Technical continuity can improve while agency, curiosity and emotional force decline.",
+  "mechanism": "Bounded repair protects the signature and meaningful control responses.",
+  "whenToUse": [
+    "Any repair/refinement of a signature, capability system or agency-bearing artifact."
+  ],
+  "whenNotToUse": [
+    "Do not preserve harmful behavior or use spectacle to excuse unreadability/accessibility failures."
+  ],
+  "parameters": [
+    "Signature amplitude, capability differentiation, peak contrast, semantic behavior and emotional purpose."
+  ],
+  "dependencies": [
+    "Before artifact/state evidence, explicit preserve invariants and separate Human Review."
+  ],
+  "implementationPattern": [
+    "Capture before states and each named control response.",
+    "State the defect and choose the smallest repair hypothesis.",
+    "Capture matching after states and record defectReduced/valuePreserved with sources.",
+    "Keep original and refinement as separate evidence events."
+  ],
+  "goodExample": {
+    "claim": "FIR DE FOC Opus and LAMELLA show strong value with fewer, highly controlled effects.",
+    "source": "docs/ALFA_EXPERIMENT_EVIDENCE_2026-10-03.md §5 and §10"
+  },
+  "antiExample": {
+    "claim": "Human Review preferred original VELORUM after continuity refinement reduced emotional force.",
+    "source": "docs/ALFA_EXPERIMENT_EVIDENCE_2026-10-03.md §9"
+  },
+  "failureModes": [
+    "agency-loss",
+    "spectacle-loss"
+  ],
+  "tests": [
+    "Compare each control and signature peak before/after.",
+    "Ask Human Authority about impact, agency and UX Motion Quality independently of metrics."
+  ],
+  "repairStrategy": [
+    "Restore lost semantic amplitude, state differentiation or curiosity trigger.",
+    "Retain improvements that repair concrete defects.",
+    "Stop low-information polishing and preserve unresolved contradictions."
+  ],
+  "preserveInvariants": [
+    "Meaningful motion",
+    "User agency",
+    "Signature amplitude",
+    "Curiosity",
+    "Emotional peak"
+  ],
+  "cost": "Requires comparison captures/review; no automatic post-processing.",
+  "version": "0.1.0",
+  "status": "CANDIDATE / NOT CORE / TO VALIDATE",
+  "provenance": [
+    {
+      "claim": "Candidate operationalization of existing human/technical experiment evidence; transfer unvalidated.",
+      "source": "docs/ALFA_EXPERIMENT_EVIDENCE_2026-10-03.md"
+    },
+    {
+      "claim": "HEG/TEG specification and Human Authority boundary.",
+      "source": "docs/ALFA_HUMAN_EXPERIENCE_GOVERNOR_v0.1.md"
+    }
+  ],
+  "transferability": "Observed context only; weaker-model and cross-domain transfer TO VALIDATE.",
+  "routing": {
+    "features": [
+      "agency"
+    ],
+    "failures": [
+      "agency-loss",
+      "spectacle-loss"
+    ],
+    "phases": [
+      "activation",
+      "generation",
+      "critique",
+      "repair"
+    ]
+  }
+}

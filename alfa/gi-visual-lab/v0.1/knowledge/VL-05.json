@@ -1,0 +1,80 @@
+{
+  "id": "VL-05",
+  "rule": "Protect copy, navigation and orientation during transformation with local, semantically timed measures.",
+  "why": "A signature loses product value when the visitor cannot read or act.",
+  "mechanism": "Content hierarchy stays legible while the environment expresses change.",
+  "whenToUse": [
+    "Changing geometry/light behind text or coupled captions and scene states."
+  ],
+  "whenNotToUse": [
+    "Do not freeze the entire environment or obscure meaning to preserve one text block."
+  ],
+  "parameters": [
+    "Contrast, safe zone, caption windows, content priority and hierarchy by viewport."
+  ],
+  "dependencies": [
+    "Essential content inventory and representative viewports."
+  ],
+  "implementationPattern": [
+    "Give essential text a stable content layer.",
+    "Coordinate reading windows with the visible semantic state.",
+    "Use local shading/dimming or composition changes; preserve moving geometry where safe.",
+    "Design mobile hierarchy and reduced/static meaning separately."
+  ],
+  "goodExample": {
+    "claim": "LAMELLA used local emission dimming behind the active text; Human readability passed.",
+    "source": "docs/ALFA_EXPERIMENT_EVIDENCE_2026-10-03.md §10; lamella-experiment/run/final-report.md"
+  },
+  "antiExample": {
+    "claim": "VELORUM refinement still reported short-landscape overlap and document/field catch-up mismatch.",
+    "source": "docs/ALFA_EXPERIMENT_EVIDENCE_2026-10-03.md §9; local REFINEMENT_REPORT.md §13"
+  },
+  "failureModes": [
+    "readability-loss",
+    "timeline-mismatch"
+  ],
+  "tests": [
+    "Read at endpoints, peak, worst boundary, pause and rapid traversal.",
+    "Inspect compact/short landscape, keyboard focus and reduced/static path."
+  ],
+  "repairStrategy": [
+    "Change local contrast protection, composition or reading windows.",
+    "Preserve stable orientation cues; synchronize copy/world deliberately.",
+    "Do not alter product truth to fit the effect."
+  ],
+  "preserveInvariants": [
+    "Essential information",
+    "Primary action",
+    "Reading hierarchy",
+    "Signature meaning"
+  ],
+  "cost": "Local layout/shading complexity; avoid per-frame layout churn.",
+  "version": "0.1.0",
+  "status": "CANDIDATE / NOT CORE / TO VALIDATE",
+  "provenance": [
+    {
+      "claim": "Candidate operationalization of existing human/technical experiment evidence; transfer unvalidated.",
+      "source": "docs/ALFA_EXPERIMENT_EVIDENCE_2026-10-03.md"
+    },
+    {
+      "claim": "HEG/TEG specification and Human Authority boundary.",
+      "source": "docs/ALFA_HUMAN_EXPERIENCE_GOVERNOR_v0.1.md"
+    }
+  ],
+  "transferability": "Observed context only; weaker-model and cross-domain transfer TO VALIDATE.",
+  "routing": {
+    "features": [
+      "transformation"
+    ],
+    "failures": [
+      "readability-loss",
+      "timeline-mismatch"
+    ],
+    "phases": [
+      "activation",
+      "generation",
+      "critique",
+      "repair"
+    ]
+  }
+}
